@@ -32,13 +32,11 @@ const UserDashboard = () => {
 
         fetchDashboardData();
 
-        // Polling: Auto-refresh data every 30 seconds for "real-time" updates
         const interval = setInterval(fetchDashboardData, 30000);
 
         return () => clearInterval(interval);
     }, [navigate]);
 
-    // Close notifications dropdown on outside click
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (notifRef.current && !notifRef.current.contains(e.target)) {
@@ -100,7 +98,6 @@ const UserDashboard = () => {
 
     const { user, appointments, messages, selections, stats } = data;
 
-    // Get messages with unread admin replies
     const unreadReplies = messages.filter(msg => msg.admin_reply && !msg.reply_read);
 
     const renderTabContent = () => {

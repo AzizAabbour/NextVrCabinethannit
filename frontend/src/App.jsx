@@ -5,7 +5,7 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import GoToTop from './components/GoToTop';
 
-// Lazy performance
+// Lazy performance bach tekon  performance zewina ou khedama mzeyann
 const Home = lazy(() => import('./pages/Home'));
 const About = lazy(() => import('./pages/About'));
 const Services = lazy(() => import('./pages/Services'));
@@ -32,7 +32,6 @@ import SplashScreen from './components/SplashScreen';
 
 function App() {
     const [showSplash, setShowSplash] = React.useState(() => {
-        // Only show splash screen if it hasn't been shown in this session
         return !sessionStorage.getItem('splash_shown');
     });
 
@@ -51,6 +50,7 @@ function App() {
                     <Navbar />
                     <main>
                         <Suspense fallback={<PageLoader />}>
+                        {/* les routers deyal apk  kamela  */}
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/a-propos" element={<About />} />
