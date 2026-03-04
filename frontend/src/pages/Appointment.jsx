@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { createAppointment } from '../services/api';
+import ScrollReveal from '../components/ScrollReveal';
 import './Appointment.css';
 
 const Appointment = () => {
@@ -85,7 +86,7 @@ const Appointment = () => {
                 <div className="container">
                     <div className="appointment-grid">
                         {/* Intro Content */}
-                        <div className="appointment-intro animate-fadeInLeft">
+                        <ScrollReveal direction="left" className="appointment-intro visible">
                             <span className="section-subtitle">Consultation</span>
                             <h2 className="section-title">Votre santé ne peut pas attendre</h2>
                             <p className="lead-text">
@@ -119,10 +120,10 @@ const Appointment = () => {
                                     <li><span>Dimanche:</span> <strong>Fermé</strong></li>
                                 </ul>
                             </div>
-                        </div>
+                        </ScrollReveal>
 
                         {/* Booking Form */}
-                        <div className="appointment-form-card card animate-fadeInRight delay-2">
+                        <ScrollReveal direction="right" delay={0.2} className="appointment-form-card card visible">
                             <form onSubmit={handleSubmit}>
                                 <h3 className="form-title">Formulaire de Réservation</h3>
 
@@ -235,7 +236,7 @@ const Appointment = () => {
                                 </button>
                                 <p className="form-note">* Champs obligatoires</p>
                             </form>
-                        </div>
+                        </ScrollReveal>
                     </div>
                 </div>
             </section>

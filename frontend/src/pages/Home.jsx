@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getServices, getDoctors } from '../services/api';
-import useAnimateOnScroll from '../hooks/useAnimateOnScroll';
+import { motion, AnimatePresence } from 'framer-motion';
+import ThreeDModel from '../components/ThreeDModel';
+import ScrollReveal from '../components/ScrollReveal';
 import './Home.css';
 
 /* ── Inline SVG Icons ── */
@@ -92,13 +93,6 @@ const faqs = [
 ];
 
 const Home = () => {
-    const [servicesRef, servicesVisible] = useAnimateOnScroll();
-    const [aboutRef, aboutVisible] = useAnimateOnScroll();
-    const [ctaRef, ctaVisible] = useAnimateOnScroll();
-    const [statsRef, statsVisible] = useAnimateOnScroll();
-    const [testimonialsRef, testimonialsVisible] = useAnimateOnScroll();
-    const [hoursRef, hoursVisible] = useAnimateOnScroll();
-    const [faqRef, faqVisible] = useAnimateOnScroll();
 
     const [openFaq, setOpenFaq] = useState(null);
     const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -164,22 +158,27 @@ const Home = () => {
                 </div>
 
                 <div className="container hero-content">
-                    <div className="hero-text">
-                        <div className="hero-badge animate-fadeInDown">
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="hero-text"
+                    >
+                        <div className="hero-badge">
                             <span className="hero-badge-dot"></span>
                             Cabinet de Kinésithérapie à Casablanca
                         </div>
-                        <h1 className="hero-title animate-fadeInUp">
+                        <h1 className="hero-title">
                             Cabinet <span className="gradient-text">Hannit</span>
                             <br />
                             <span className="hero-title-sub">Le meilleur pour votre santé</span>
                         </h1>
-                        <p className="hero-description animate-fadeInUp delay-2">
+                        <p className="hero-description">
                             L'information, l'utilisation et la connaissance croissante de la
                             physiothérapie sont parmi les facteurs les plus importants pour votre
                             bien-être. Nous mettons notre expertise à votre service.
                         </p>
-                        <div className="hero-actions animate-fadeInUp delay-3">
+                        <div className="hero-actions">
                             <Link to="/rendez-vous" className="btn btn-primary btn-lg" id="hero-appointment-btn">
                                 Prendre Rendez-vous
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -190,70 +189,100 @@ const Home = () => {
                                 Nos Services
                             </Link>
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <div className="hero-visual animate-scaleIn delay-3">
-                        <div className="hero-image-wrapper">
-                            <img
-                                src={heroImage}
-                                alt="Cabinet de kinésithérapie moderne"
-                                className="hero-image"
-                            />
-                            <div className="hero-floating-card hero-card-1">
-                                <div className="floating-card-icon">{icons.check}</div>
-                                <div>
-                                    <strong>+2000</strong>
-                                    <span>Patients satisfaits</span>
-                                </div>
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 1 }}
+                        className="hero-visual"
+                    >
+                        <div className="hero-visual-container" style={{ position: 'relative', width: '100%', height: '600px' }}>
+                            {/* 3D Background Model */}
+                            <div className="hero-3d-bg" style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.6 }}>
+                                <ThreeDModel />
                             </div>
-                            <div className="hero-floating-card hero-card-2">
-                                <div className="floating-card-icon accent">{icons.clock}</div>
-                                <div>
-                                    <strong>Depuis 2017</strong>
-                                    <span>À votre service</span>
+
+                            {/* Hero Image with 3D Tilt */}
+                            <motion.div
+                                whileHover={{ rotateY: 15, rotateX: -5, scale: 1.02 }}
+                                style={{ perspective: '1000px', zIndex: 1, position: 'relative' }}
+                                className="hero-image-wrapper"
+                            >
+                                <img
+                                    src={heroImage}
+                                    alt="Cabinet de kinésithérapie moderne"
+                                    className="hero-image"
+                                />
+                                <div className="hero-floating-card hero-card-1">
+                                    <div className="floating-card-icon">{icons.check}</div>
+                                    <div>
+                                        <strong>+2000</strong>
+                                        <span>Patients satisfaits</span>
+                                    </div>
                                 </div>
-                            </div>
+                                <div className="hero-floating-card hero-card-2">
+                                    <div className="floating-card-icon accent">{icons.clock}</div>
+                                    <div>
+                                        <strong>Depuis 2017</strong>
+                                        <span>À votre service</span>
+                                    </div>
+                                </div>
+                            </motion.div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Specialty cards */}
                 <div className="container">
                     <div className="hero-specialties">
                         {specialties.map((spec, i) => (
-                            <div key={i} className={`specialty-card animate-fadeInUp delay-${i + 2}`}>
+                            <motion.div
+                                key={i}
+                                whileHover={{ scale: 1.05, rotateY: 10, rotateX: 5 }}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 * i }}
+                                className="specialty-card"
+                            >
                                 <div className="specialty-icon">{spec.icon}</div>
                                 <h3 className="specialty-title">{spec.title}</h3>
                                 <p className="specialty-desc">{spec.desc}</p>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* ════════ About Preview Section ════════ */}
-            <section ref={aboutRef} className={`section about-preview ${aboutVisible ? 'visible' : ''}`}>
+            <section className="section about-preview visible">
                 <div className="container">
                     <div className="about-grid">
-                        <div className="about-images">
-                            <div className="about-img-main">
+                        <ScrollReveal direction="left" className="about-images">
+                            <motion.div
+                                whileHover={{ rotateY: -10, rotateX: 5, scale: 1.02 }}
+                                className="about-img-main"
+                            >
                                 <img
                                     src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&h=600&fit=crop"
                                     alt="Cabinet Hannit intérieur"
                                 />
-                            </div>
-                            <div className="about-img-secondary">
+                            </motion.div>
+                            <motion.div
+                                whileHover={{ rotateY: 10, rotateX: -5, scale: 1.05 }}
+                                className="about-img-secondary"
+                            >
                                 <img
                                     src="https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=300&h=350&fit=crop"
                                     alt="Soins de kinésithérapie"
                                 />
-                            </div>
+                            </motion.div>
                             <div className="about-experience-badge">
                                 <span className="experience-number">8+</span>
                                 <span className="experience-text">Années d'expérience</span>
                             </div>
-                        </div>
-                        <div className="about-content">
+                        </ScrollReveal>
+                        <ScrollReveal direction="right" delay={0.2} className="about-content">
                             <span className="section-subtitle">À propos de nous</span>
                             <h2 className="section-title">Les gens nous font confiance</h2>
                             <p className="about-highlight">
@@ -286,13 +315,13 @@ const Home = () => {
                             <Link to="/a-propos" className="btn btn-primary" id="home-about-btn">
                                 En savoir plus
                             </Link>
-                        </div>
+                        </ScrollReveal>
                     </div>
                 </div>
             </section>
 
             {/* ════════ Stats Section ════════ */}
-            <section ref={statsRef} className={`stats-section ${statsVisible ? 'visible' : ''}`}>
+            <section className="stats-section visible">
                 <div className="container">
                     <div className="stats-grid">
                         {[
@@ -301,39 +330,45 @@ const Home = () => {
                             { number: '6', label: 'Services Spécialisés' },
                             { number: '98%', label: 'Satisfaction' },
                         ].map((stat, i) => (
-                            <div key={i} className="stat-item">
+                            <ScrollReveal key={i} delay={i * 0.1} className="stat-item visible">
                                 <span className="stat-number">{stat.number}</span>
                                 <span className="stat-label">{stat.label}</span>
-                            </div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* ════════ Services Section ════════ */}
-            <section ref={servicesRef} className={`section services-section ${servicesVisible ? 'visible' : ''}`}>
+            <section className="section services-section visible">
                 <div className="container">
-                    <div className="section-header">
+                    <ScrollReveal className="section-header">
                         <span className="section-subtitle">Nos Services</span>
                         <h2 className="section-title">Découvrez nos services</h2>
                         <p className="section-description">
                             Des soins de qualité adaptés à vos besoins, dispensés par une équipe de professionnels passionnés.
                         </p>
-                    </div>
+                    </ScrollReveal>
 
                     <div className="services-grid">
                         {servicesData.map((service, i) => (
-                            <div key={i} className="service-card card">
-                                <div className="service-card-icon">{service.icon}</div>
-                                <h3 className="service-card-title">{service.title}</h3>
-                                <p className="service-card-desc">{service.desc}</p>
-                                <Link to="/services" className="service-card-link">
-                                    En savoir plus
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-                                    </svg>
-                                </Link>
-                            </div>
+                            <ScrollReveal
+                                key={i}
+                                delay={i * 0.1}
+                                className="service-card card visible"
+                            >
+                                <motion.div whileHover={{ scale: 1.05, rotateY: 5, translateZ: 20 }}>
+                                    <div className="service-card-icon">{service.icon}</div>
+                                    <h3 className="service-card-title">{service.title}</h3>
+                                    <p className="service-card-desc">{service.desc}</p>
+                                    <Link to="/services" className="service-card-link">
+                                        En savoir plus
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                                        </svg>
+                                    </Link>
+                                </motion.div>
+                            </ScrollReveal>
                         ))}
                     </div>
 
@@ -351,74 +386,73 @@ const Home = () => {
             </section>
 
             {/* ════════ Testimonials Section ════════ */}
-            <section ref={testimonialsRef} className={`section testimonials-section ${testimonialsVisible ? 'visible' : ''}`}>
+            <section className="section testimonials-section visible">
                 <div className="container">
-                    <div className="section-header">
+                    <ScrollReveal className="section-header">
                         <span className="section-subtitle">Témoignages</span>
                         <h2 className="section-title">Ce que disent nos patients</h2>
-                    </div>
-                    <div
-                        className="testimonials-carousel-wrapper"
-                        onTouchStart={onTouchStart}
-                        onTouchMove={onTouchMove}
-                        onTouchEnd={onTouchEnd}
-                    >
-
-                        <div className="testimonials-carousel" style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
-                            {testimonials.map((t, i) => (
-                                <div key={i} className="testimonial-slide">
-                                    <div className="testimonial-card card">
-                                        <div className="testimonial-stars">
-                                            {Array.from({ length: t.rating }, (_, j) => (
-                                                <span key={j} className="star">{icons.star}</span>
-                                            ))}
-                                        </div>
-                                        <p className="testimonial-text">"{t.text}"</p>
-                                        <div className="testimonial-author">
-                                            <div className="testimonial-avatar">{t.name.charAt(0)}</div>
-                                            <div className="testimonial-meta">
-                                                <span className="testimonial-name">{t.name}</span>
-                                                <span className="testimonial-status">Patient Vérifié</span>
+                    </ScrollReveal>
+                    <ScrollReveal delay={0.2} className="testimonials-carousel-wrapper">
+                        <div
+                            onTouchStart={onTouchStart}
+                            onTouchMove={onTouchMove}
+                            onTouchEnd={onTouchEnd}
+                        >
+                            <div className="testimonials-carousel" style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
+                                {testimonials.map((t, i) => (
+                                    <div key={i} className="testimonial-slide">
+                                        <div className="testimonial-card card">
+                                            <div className="testimonial-stars">
+                                                {Array.from({ length: t.rating }, (_, j) => (
+                                                    <span key={j} className="star">{icons.star}</span>
+                                                ))}
+                                            </div>
+                                            <p className="testimonial-text">"{t.text}"</p>
+                                            <div className="testimonial-author">
+                                                <div className="testimonial-avatar">{t.name.charAt(0)}</div>
+                                                <div className="testimonial-meta">
+                                                    <span className="testimonial-name">{t.name}</span>
+                                                    <span className="testimonial-status">Patient Vérifié</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
 
-                        <div className="carousel-controls">
-                            <button className="carousel-btn prev" onClick={prevTestimonial} aria-label="Précédent">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="15 18 9 12 15 6" />
-                                </svg>
-                            </button>
-                            <button className="carousel-btn next" onClick={nextTestimonial} aria-label="Suivant">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </button>
-                        </div>
+                            <div className="carousel-controls">
+                                <button className="carousel-btn prev" onClick={prevTestimonial} aria-label="Précédent">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="15 18 9 12 15 6" />
+                                    </svg>
+                                </button>
+                                <button className="carousel-btn next" onClick={nextTestimonial} aria-label="Suivant">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                </button>
+                            </div>
 
-                        <div className="carousel-dots">
-                            {testimonials.map((_, i) => (
-                                <button
-                                    key={i}
-                                    className={`dot ${currentTestimonial === i ? 'active' : ''}`}
-                                    onClick={() => setCurrentTestimonial(i)}
-                                    aria-label={`Aller au témoignage ${i + 1}`}
-                                />
-                            ))}
+                            <div className="carousel-dots">
+                                {testimonials.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        className={`dot ${currentTestimonial === i ? 'active' : ''}`}
+                                        onClick={() => setCurrentTestimonial(i)}
+                                        aria-label={`Aller au témoignage ${i + 1}`}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-
+                    </ScrollReveal>
                 </div>
             </section>
 
             {/* ════════ Working Hours Section ════════ */}
-            <section ref={hoursRef} className={`section hours-section ${hoursVisible ? 'visible' : ''}`}>
+            <section className="section hours-section visible">
                 <div className="container">
                     <div className="hours-grid">
-                        <div className="hours-content">
+                        <ScrollReveal direction="left" className="hours-content">
                             <span className="section-subtitle">Horaires</span>
                             <h2 className="section-title">Heures d'ouverture</h2>
                             <p className="hours-description">
@@ -442,8 +476,8 @@ const Home = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                        <div className="hours-info">
+                        </ScrollReveal>
+                        <ScrollReveal direction="right" delay={0.2} className="hours-info">
                             <div className="info-card">
                                 <div className="info-card-icon">{icons.location}</div>
                                 <h4>Notre Adresse</h4>
@@ -455,42 +489,44 @@ const Home = () => {
                                 <p><a href="tel:+212644574537">+212 644 574 537</a></p>
                                 <p><a href="tel:+212522342569">+212 522 342 569</a></p>
                             </div>
-                        </div>
+                        </ScrollReveal>
                     </div>
                 </div>
             </section>
 
             {/* ════════ FAQ Section ════════ */}
-            <section ref={faqRef} className={`section faq-section ${faqVisible ? 'visible' : ''}`}>
+            <section className="section faq-section visible">
                 <div className="container">
-                    <div className="section-header">
+                    <ScrollReveal className="section-header">
                         <span className="section-subtitle">FAQ</span>
                         <h2 className="section-title">Questions Fréquentes</h2>
-                    </div>
+                    </ScrollReveal>
                     <div className="faq-list">
                         {faqs.map((faq, i) => (
-                            <div key={i} className={`faq-item ${openFaq === i ? 'open' : ''}`}>
-                                <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                                    <span>{faq.q}</span>
-                                    <svg className="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <polyline points="6 9 12 15 18 9" />
-                                    </svg>
-                                </button>
-                                <div className="faq-answer">
-                                    <p>{faq.a}</p>
+                            <ScrollReveal key={i} delay={i * 0.1}>
+                                <div className={`faq-item ${openFaq === i ? 'open' : ''}`}>
+                                    <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                                        <span>{faq.q}</span>
+                                        <svg className="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polyline points="6 9 12 15 18 9" />
+                                        </svg>
+                                    </button>
+                                    <div className="faq-answer">
+                                        <p>{faq.a}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* ════════ CTA Section ════════ */}
-            <section ref={ctaRef} className={`cta-section ${ctaVisible ? 'visible' : ''}`}>
+            <section className="cta-section visible">
                 <div className="cta-bg">
                     <div className="cta-pattern"></div>
                 </div>
-                <div className="container cta-content">
+                <ScrollReveal className="container cta-content">
                     <h2 className="cta-title">Ne perdez pas votre temps</h2>
                     <p className="cta-subtitle">Prenez rendez-vous en ligne dès maintenant</p>
                     <div className="cta-actions">
@@ -502,9 +538,9 @@ const Home = () => {
                             Appelez-nous
                         </a>
                     </div>
-                </div>
+                </ScrollReveal>
             </section>
-        </div>
+        </div >
     );
 };
 

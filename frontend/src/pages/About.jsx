@@ -1,13 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PageHeader from '../components/PageHeader';
-import useAnimateOnScroll from '../hooks/useAnimateOnScroll';
+import ScrollReveal from '../components/ScrollReveal';
 import './About.css';
 
 const About = () => {
-    const [visionRef, visionVisible] = useAnimateOnScroll();
-    const [teamRef, teamVisible] = useAnimateOnScroll();
-    const [valuesRef, valuesVisible] = useAnimateOnScroll();
-
     return (
         <div className="about-page">
             <PageHeader
@@ -23,7 +19,7 @@ const About = () => {
             <section className="section about-intro">
                 <div className="container">
                     <div className="about-intro-grid">
-                        <div className="about-intro-content animate-fadeInLeft">
+                        <ScrollReveal direction="left" className="about-intro-content">
                             <span className="section-subtitle">Notre Histoire</span>
                             <h2 className="section-title">L'excellence au service de votre santé</h2>
                             <p className="lead-text">
@@ -41,8 +37,8 @@ const About = () => {
                                 globale des besoins de chacun. C'est pourquoi notre approche est résolument humaine et
                                 interdisciplinaire.
                             </p>
-                        </div>
-                        <div className="about-intro-image animate-fadeInRight delay-2">
+                        </ScrollReveal>
+                        <ScrollReveal direction="right" delay={0.2} className="about-intro-image">
                             <img
                                 src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&h=700&fit=crop"
                                 alt="Cabinet Hannit Salle de Soin"
@@ -52,63 +48,53 @@ const About = () => {
                                 <span className="badge-year">2017</span>
                                 <span className="badge-text">Année de fondation</span>
                             </div>
-                        </div>
+                        </ScrollReveal>
                     </div>
                 </div>
             </section>
 
             {/* Vision & Mission */}
-            <section ref={visionRef} className={`section vision-section ${visionVisible ? 'visible' : ''}`}>
+            <section className="section vision-section visible">
                 <div className="container">
                     <div className="vision-grid">
-                        <div className="vision-card">
-                            <div className="vision-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                    <path d="M2 12h5l3 5 3-9 3 5h5M22 12h-2" />
-                                </svg>
-                            </div>
-                            <h3>Notre Mission</h3>
-                            <p>
-                                Améliorer la qualité de vie de nos patients en leur redonnant mobilité et autonomie
-                                grâce à des soins de rééducation de haute qualité.
-                            </p>
-                        </div>
-                        <div className="vision-card">
-                            <div className="vision-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="M12 16v-4M12 8h.01" />
-                                </svg>
-                            </div>
-                            <h3>Notre Vision</h3>
-                            <p>
-                                Devenir la référence en kinésithérapie à Casablanca en innovant constamment
-                                et en maintenant les plus hauts standards de pratique médicale.
-                            </p>
-                        </div>
-                        <div className="vision-card">
-                            <div className="vision-icon">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
-                                </svg>
-                            </div>
-                            <h3>Nos Valeurs</h3>
-                            <p>
-                                Empathie, Professionnalisme, Innovation et Intégrité guident chacune de nos
-                                actions et interactions avec nos patients.
-                            </p>
-                        </div>
+                        {[
+                            {
+                                icon: <path d="M2 12h5l3 5 3-9 3 5h5M22 12h-2" />,
+                                title: "Notre Mission",
+                                desc: "Améliorer la qualité de vie de nos patients en leur redonnant mobilité et autonomie grâce à des soins de rééducation de haute qualité."
+                            },
+                            {
+                                icon: <React.Fragment><circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" /></React.Fragment>,
+                                title: "Notre Vision",
+                                desc: "Devenir la référence en kinésithérapie à Casablanca en innovant constamment et en maintenant les plus hauts standards de pratique médicale."
+                            },
+                            {
+                                icon: <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />,
+                                title: "Nos Valeurs",
+                                desc: "Empathie, Professionnalisme, Innovation et Intégrité guident chacune de nos actions et interactions avec nos patients."
+                            }
+                        ].map((item, i) => (
+                            <ScrollReveal key={i} delay={i * 0.2} className="vision-card">
+                                <div className="vision-icon">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        {item.icon}
+                                    </svg>
+                                </div>
+                                <h3>{item.title}</h3>
+                                <p>{item.desc}</p>
+                            </ScrollReveal>
+                        ))}
                     </div>
                 </div>
             </section>
 
             {/* Values/Why Choose Us */}
-            <section ref={valuesRef} className={`section values-section ${valuesVisible ? 'visible' : ''}`}>
+            <section className="section values-section visible">
                 <div className="container">
-                    <div className="section-header">
+                    <ScrollReveal className="section-header">
                         <span className="section-subtitle">Pourquoi Nous Choisir</span>
                         <h2 className="section-title">Votre santé mérite le meilleur</h2>
-                    </div>
+                    </ScrollReveal>
 
                     <div className="values-grid">
                         {[
@@ -128,7 +114,7 @@ const About = () => {
                                 image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&h=350&fit=crop'
                             }
                         ].map((item, i) => (
-                            <div key={i} className="value-item">
+                            <ScrollReveal key={i} delay={i * 0.2} className="value-item">
                                 <div className="value-image">
                                     <img src={item.image} alt={item.title} />
                                 </div>
@@ -136,7 +122,7 @@ const About = () => {
                                     <h3>{item.title}</h3>
                                     <p>{item.desc}</p>
                                 </div>
-                            </div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>

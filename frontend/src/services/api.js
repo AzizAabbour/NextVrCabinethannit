@@ -15,7 +15,7 @@ api.interceptors.request.use((config) => {
     const adminToken = localStorage.getItem('admin_token');
     const userToken = localStorage.getItem('user_token');
 
- 
+
     if (adminToken) {
         config.headers.Authorization = `Bearer ${adminToken}`;
     } else if (userToken) {
@@ -71,3 +71,4 @@ export default api;
 
 // User Dashboard
 export const markReplyAsRead = (id) => api.patch(`/dashboard/messages/${id}/mark-read`);
+export const deleteUserMessage = (id) => api.delete(`/dashboard/messages/${id}`);

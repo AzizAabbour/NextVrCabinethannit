@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../services/api';
+import ScrollReveal from '../components/ScrollReveal';
 import './Register.css';
 
 const Register = () => {
@@ -60,7 +61,7 @@ const Register = () => {
     return (
         <div className="register-page">
             <div className="register-container">
-                <div className="register-card animate-fadeInUp">
+                <ScrollReveal direction="up" className="register-card visible">
                     <div className="register-header">
                         <div className="cabinet-logo">
                             <img src="/logo.png" alt="Cabinet Hannit" style={{ width: '60px', height: '60px' }} />
@@ -81,7 +82,7 @@ const Register = () => {
                     )}
 
                     <form onSubmit={handleRegister} className="register-form">
-                        <div className="form-group animate-fadeInUp animate-delay-100">
+                        <div className="form-group">
                             <label htmlFor="name">Nom complet</label>
                             <input
                                 type="text"
@@ -94,7 +95,7 @@ const Register = () => {
                                 placeholder="Votre nom"
                             />
                         </div>
-                        <div className="form-group animate-fadeInUp animate-delay-100">
+                        <div className="form-group">
                             <label htmlFor="email">Email</label>
                             <input
                                 type="email"
@@ -107,7 +108,7 @@ const Register = () => {
                                 placeholder="votre@email.com"
                             />
                         </div>
-                        <div className="form-group animate-fadeInUp animate-delay-100">
+                        <div className="form-group">
                             <label htmlFor="password">Mot de passe</label>
                             <input
                                 type="password"
@@ -120,7 +121,7 @@ const Register = () => {
                                 placeholder="••••••••"
                             />
                         </div>
-                        <div className="form-group animate-fadeInUp animate-delay-100">
+                        <div className="form-group">
                             <label htmlFor="password_confirmation">Confirmer le mot de passe</label>
                             <input
                                 type="password"
@@ -133,7 +134,7 @@ const Register = () => {
                                 placeholder="••••••••"
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary btn-block animate-fadeInUp animate-delay-100" style={{ width: '100%', height: '52px' }} disabled={loading}>
+                        <button type="submit" className="btn btn-primary btn-block" style={{ width: '100%', height: '52px' }} disabled={loading}>
                             {loading ? (
                                 <>
                                     <span className="spinner-small" style={{ marginRight: '10px' }}></span>
@@ -143,10 +144,10 @@ const Register = () => {
                         </button>
                     </form>
 
-                    <div className="register-footer animate-fadeInUp animate-delay-100">
+                    <div className="register-footer">
                         <p>Déjà un compte ? <Link to="/connexion">Connectez-vous ici</Link></p>
                     </div>
-                </div>
+                </ScrollReveal>
             </div>
         </div>
     );

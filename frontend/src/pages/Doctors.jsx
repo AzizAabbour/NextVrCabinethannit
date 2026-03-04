@@ -1,11 +1,9 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
-import useAnimateOnScroll from '../hooks/useAnimateOnScroll';
+import ScrollReveal from '../components/ScrollReveal';
 import './Doctors.css';
 
 const Doctors = () => {
-    const [teamRef, teamVisible] = useAnimateOnScroll();
-
     const teamMembers = [
         {
             name: 'Asmaa Hannit',
@@ -41,14 +39,14 @@ const Doctors = () => {
                 ]}
             />
 
-            <section ref={teamRef} className="section team-section">
+            <section className="section team-section">
                 <div className="container">
                     <div className="team-grid">
                         {teamMembers.map((member, index) => (
-                            <div
+                            <ScrollReveal
                                 key={index}
-                                className={`team-card card animate-fadeInUp delay-${index + 1}`}
-                                style={{ transitionDelay: `${index * 0.2}s` }}
+                                delay={index * 0.2}
+                                className="team-card card visible"
                             >
                                 <div className="team-image-wrapper">
                                     <img src={member.image} alt={member.name} className="team-image" />
@@ -65,7 +63,7 @@ const Doctors = () => {
                                     <p className="team-speciality">{member.speciality}</p>
                                     <p className="team-bio">{member.bio}</p>
                                 </div>
-                            </div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>

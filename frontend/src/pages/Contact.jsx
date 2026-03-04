@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { sendContactMessage } from '../services/api';
+import ScrollReveal from '../components/ScrollReveal';
 import './Contact.css';
 
 const Contact = () => {
@@ -102,7 +103,7 @@ const Contact = () => {
                 <div className="container">
                     <div className="contact-grid">
                         {/* Contact Info */}
-                        <div className="contact-info animate-fadeInLeft">
+                        <ScrollReveal direction="left" className="contact-info visible">
                             <span className="section-subtitle">Informations</span>
                             <h2 className="section-title">Restons en contact</h2>
                             <p className="contact-description">
@@ -137,10 +138,10 @@ const Contact = () => {
                                     title="Cabinet Hannit Location"
                                 ></iframe>
                             </div>
-                        </div>
+                        </ScrollReveal>
 
                         {/* Contact Form */}
-                        <div className="contact-form-wrapper card animate-fadeInRight delay-2">
+                        <ScrollReveal direction="right" delay={0.2} className="contact-form-wrapper card visible">
                             <h3>Envoyez-nous un message</h3>
                             {status.message && (
                                 <div className={`alert alert-${status.type}`}>
@@ -217,7 +218,7 @@ const Contact = () => {
                                     {loading ? 'Envoi en cours...' : 'Envoyer le message'}
                                 </button>
                             </form>
-                        </div>
+                        </ScrollReveal>
                     </div>
                 </div>
             </section>

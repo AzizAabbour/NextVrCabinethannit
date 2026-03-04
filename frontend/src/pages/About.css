@@ -79,26 +79,8 @@
     box-shadow: var(--shadow-sm);
     text-align: center;
     transition: all var(--transition-base);
-    opacity: 0;
-    transform: translateY(20px);
 }
 
-.vision-section.visible .vision-card {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.vision-section.visible .vision-card:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
-.vision-section.visible .vision-card:nth-child(2) {
-    transition-delay: 0.2s;
-}
-
-.vision-section.visible .vision-card:nth-child(3) {
-    transition-delay: 0.3s;
-}
 
 .vision-card:hover {
     transform: translateY(-5px);
@@ -134,27 +116,9 @@
     overflow: hidden;
     background: var(--white);
     box-shadow: var(--shadow-card);
-    opacity: 0;
-    transform: translateY(20px);
     transition: all var(--transition-base);
 }
 
-.values-section.visible .value-item {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.values-section.visible .value-item:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
-.values-section.visible .value-item:nth-child(2) {
-    transition-delay: 0.2s;
-}
-
-.values-section.visible .value-item:nth-child(3) {
-    transition-delay: 0.3s;
-}
 
 .value-image {
     height: 200px;

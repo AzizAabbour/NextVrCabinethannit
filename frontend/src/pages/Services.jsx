@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
-import useAnimateOnScroll from '../hooks/useAnimateOnScroll';
+import ScrollReveal from '../components/ScrollReveal';
 import './Services.css';
 
 const Services = () => {
-    const [listRef, listVisible] = useAnimateOnScroll();
-
     const servicesList = [
+        // ... (services data remains the same)
         {
             id: 'kinesitherapie',
             title: 'Kinésithérapie',
@@ -87,15 +86,14 @@ const Services = () => {
                 ]}
             />
 
-            <section ref={listRef} className="section services-list-section">
+            <section className="section services-list-section">
                 <div className="container">
                     <div className="services-list-grid">
                         {servicesList.map((service, index) => (
-                            <div
+                            <ScrollReveal
                                 key={service.id}
-                                id={service.id}
-                                className={`service-item card ${listVisible ? 'visible' : ''}`}
-                                style={{ transitionDelay: `${index * 0.1}s` }}
+                                delay={index * 0.1}
+                                className="service-item card visible"
                             >
                                 <div className="service-icon-wrapper">
                                     {service.icon}
@@ -117,14 +115,14 @@ const Services = () => {
                                         Prendre Rendez-vous
                                     </Link>
                                 </div>
-                            </div>
+                            </ScrollReveal>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* CTA Banner */}
-            <section className="service-cta">
+            <ScrollReveal className="service-cta">
                 <div className="container">
                     <div className="service-cta-content">
                         <h2>Besoin d'un conseil personnalisé ?</h2>
@@ -132,7 +130,7 @@ const Services = () => {
                         <Link to="/contact" className="btn btn-white">Contactez-nous</Link>
                     </div>
                 </div>
-            </section>
+            </ScrollReveal>
         </div>
     );
 };

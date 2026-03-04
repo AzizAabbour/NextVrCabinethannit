@@ -70,4 +70,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/dashboard/messages', [\App\Http\Controllers\Api\UserDashboardController::class, 'messages']);
     Route::post('/services/{id}/toggle-selection', [\App\Http\Controllers\Api\UserDashboardController::class, 'toggleSelection']);
     Route::patch('/dashboard/messages/{id}/mark-read', [\App\Http\Controllers\Api\UserDashboardController::class, 'markReplyRead']);
+    Route::delete('/dashboard/messages/{id}', [\App\Http\Controllers\Api\UserDashboardController::class, 'destroy']);
 });

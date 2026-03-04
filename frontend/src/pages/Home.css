@@ -278,16 +278,8 @@
 
 .about-images {
     position: relative;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease;
 }
 
-.about-content {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease 0.2s;
-}
 
 .about-img-main img {
     width: 100%;
@@ -387,10 +379,6 @@
     padding: var(--space-3xl) 0;
 }
 
-.stats-section.visible .stat-item {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 .stats-grid {
     display: grid;
@@ -401,25 +389,6 @@
 .stat-item {
     text-align: center;
     color: var(--white);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.6s ease;
-}
-
-.stat-item:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
-.stat-item:nth-child(2) {
-    transition-delay: 0.2s;
-}
-
-.stat-item:nth-child(3) {
-    transition-delay: 0.3s;
-}
-
-.stat-item:nth-child(4) {
-    transition-delay: 0.4s;
 }
 
 .stat-number {
@@ -437,10 +406,6 @@
 }
 
 
-.services-section.visible .service-card {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 .services-grid {
     display: grid;
@@ -450,33 +415,6 @@
 
 .service-card {
     text-align: center;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
-}
-
-.service-card:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
-.service-card:nth-child(2) {
-    transition-delay: 0.15s;
-}
-
-.service-card:nth-child(3) {
-    transition-delay: 0.2s;
-}
-
-.service-card:nth-child(4) {
-    transition-delay: 0.25s;
-}
-
-.service-card:nth-child(5) {
-    transition-delay: 0.3s;
-}
-
-.service-card:nth-child(6) {
-    transition-delay: 0.35s;
 }
 
 .service-card-icon {
@@ -597,10 +535,6 @@
     margin: 0 auto;
 }
 
-.testimonials-section.visible .testimonial-card {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 .testimonial-stars {
     display: flex;
@@ -754,12 +688,6 @@
 }
 
 
-/* ── Hours Section ── */
-.hours-section.visible .hours-content,
-.hours-section.visible .hours-info {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 .hours-grid {
     display: grid;
@@ -768,16 +696,8 @@
     align-items: start;
 }
 
-.hours-content {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.7s ease;
-}
 
 .hours-info {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.7s ease 0.2s;
     display: flex;
     flex-direction: column;
     gap: var(--space-xl);
@@ -874,10 +794,6 @@
     background: var(--light-bg);
 }
 
-.faq-section.visible .faq-item {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 .faq-list {
     max-width: 750px;
@@ -890,26 +806,8 @@
     margin-bottom: 12px;
     box-shadow: var(--shadow-sm);
     overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease;
 }
 
-.faq-item:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
-.faq-item:nth-child(2) {
-    transition-delay: 0.15s;
-}
-
-.faq-item:nth-child(3) {
-    transition-delay: 0.2s;
-}
-
-.faq-item:nth-child(4) {
-    transition-delay: 0.25s;
-}
 
 .faq-question {
     width: 100%;
@@ -979,9 +877,6 @@
     color: var(--white);
 }
 
-.cta-section.visible .cta-content {
-    animation: fadeInUp 0.7s ease forwards;
-}
 
 .cta-title {
     color: var(--white);

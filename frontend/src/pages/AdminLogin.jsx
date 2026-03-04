@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { adminLogin, googleOAuthLogin } from '../services/api';
+import ScrollReveal from '../components/ScrollReveal';
 import './AdminLogin.css';
 
 const AdminLogin = () => {
@@ -32,7 +33,7 @@ const AdminLogin = () => {
     return (
         <div className="admin-login-page">
             <div className="login-container">
-                <div className="login-card animate-fadeInUp">
+                <ScrollReveal direction="up" className="login-card visible">
                     <div className="login-header">
                         <div className="admin-logo">
                             <img src="/logo.png" alt="Cabinet Hannit" style={{ width: '60px', height: '60px' }} />
@@ -68,11 +69,11 @@ const AdminLogin = () => {
                                 placeholder="••••••••"
                             />
                         </div>
-                        <button type="submit" style={{ width: '100%' }} className="btn btn-primary btn-block animate-fadeInUp animate-delay-100" disabled={loading}>
+                        <button type="submit" style={{ width: '100%' }} className="btn btn-primary btn-block" disabled={loading}>
                             {loading ? 'Connexion...' : 'Se connecter'}
                         </button>
                     </form>
-                </div>
+                </ScrollReveal>
             </div>
         </div>
     );

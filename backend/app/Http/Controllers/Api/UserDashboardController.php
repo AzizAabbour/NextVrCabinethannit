@@ -107,4 +107,25 @@ class UserDashboardController extends Controller
 
         return response()->json(['message' => 'Réponse marquée comme lue', 'data' => $message]);
     }
+
+    /**
+     * Delete a message by the user
+     */
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
+            $message = $user->messages()->findOrFail($id);
+            
+            $message->delete();
+
+            return response()->json([
+                'message' => 'Message supprimé avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la suppression du message'
+            ], 500);
+        }
+    }
 }
