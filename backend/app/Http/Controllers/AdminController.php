@@ -29,8 +29,21 @@ class AdminController extends Controller
 
     public function users()
     {
-        $users = \App\Models\User::orderBy('created_at', 'desc')->get();
+        $users = \App\Models\User::orderBy('is_admin', 'desc')->orderBy('created_at', 'desc')->get();
         return response()->json($users);
+    }
+
+    public function destroyUser($id)
+    {
+        $user = \App\Models\User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'Utilisateur introuvable'], 404);
+        }
+        if ($user->is_admin) {
+            return response()->json(['message' => 'Impossible de supprimer un administrateur'], 403);
+        }
+        $user->delete();
+        return response()->json(['message' => 'Utilisateur supprimé avec succès']);
     }
 
     public function patients()

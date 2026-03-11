@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDashboardStats, getAppointments, updateAppointmentStatus, getMessages, updateMessageStatus, getPatients, getUsers, adminLogout, replyToMessage, generateReport, downloadReport, getReportHistory, deleteReport } from '../services/api';
+import { getDashboardStats, getAppointments, updateAppointmentStatus, deleteAppointment, getMessages, updateMessageStatus, getPatients, getUsers, adminLogout, replyToMessage, generateReport, downloadReport, getReportHistory, deleteReport, deleteMessage, deleteUser } from '../services/api';
 import Analytics from './Analytics';
 import './AdminDashboard.css';
 
@@ -12,7 +12,8 @@ const AdminDashboard = () => {
     const [patients, setPatients] = useState([]);
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
-    const [filter, setFilter] = useState('all'); // all, pending, confirmed, cancelled
+    const [filter, setFilter] = useState('pending'); // all, pending, confirmed, cancelled
+    const [patientSearch, setPatientSearch] = useState('');
     const [loading, setLoading] = useState(true);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [replyText, setReplyText] = useState('');
@@ -70,6 +71,16 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleDeleteAppointment = async (id) => {
+        if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce rendez-vous ?")) return;
+        try {
+            await deleteAppointment(id);
+            setAppointments(prev => prev.filter(app => app.id !== id));
+        } catch (error) {
+            console.error('Error deleting appointment:', error);
+        }
+    };
+
     const handleMarkAsRead = async (id) => {
         try {
             await updateMessageStatus(id, true);
@@ -78,6 +89,33 @@ const AdminDashboard = () => {
             ));
         } catch (error) {
             console.error('Error marking as read:', error);
+        }
+    };
+
+    const handleDeleteMessage = async (id) => {
+        if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) return;
+        try {
+            await deleteMessage(id);
+            setMessages(prev => prev.filter(msg => msg.id !== id));
+        } catch (error) {
+            console.error('Error deleting message:', error);
+        }
+    };
+
+    const handleDeleteUser = async (user) => {
+        if (user.is_admin) {
+             alert('Vous ne pouvez pas supprimer un administrateur.');
+             return;
+        }
+        if (!window.confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.name} ?`)) return;
+        try {
+            await deleteUser(user.id);
+            setUsers(prev => prev.filter(u => u.id !== user.id));
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            if(error.response?.data?.message) {
+                 alert(error.response.data.message);
+            }
         }
     };
 
@@ -110,6 +148,15 @@ const AdminDashboard = () => {
     const filteredAppointments = appointments.filter(app =>
         filter === 'all' ? true : app.status === filter
     );
+
+    const filteredPatientsList = patients.filter(p => {
+        const query = patientSearch.toLowerCase();
+        return (
+            (p.name && p.name.toLowerCase().includes(query)) ||
+            (p.email && p.email.toLowerCase().includes(query)) ||
+            (p.phone && p.phone.toLowerCase().includes(query))
+        );
+    });
 
     // ── Report Functions ────────────────────────────────────────
     const fetchReportHistory = async () => {
@@ -252,10 +299,6 @@ const AdminDashboard = () => {
                             <h2>Rendez-vous Récents</h2>
                             <div className="filter-tabs">
                                 <button
-                                    className={filter === 'all' ? 'active' : ''}
-                                    onClick={() => setFilter('all')}
-                                >Tous</button>
-                                <button
                                     className={filter === 'pending' ? 'active' : ''}
                                     onClick={() => setFilter('pending')}
                                 >En Attente</button>
@@ -320,6 +363,9 @@ const AdminDashboard = () => {
                                                                 </button>
                                                             </>
                                                         )}
+                                                        <button className="action-btn cross" style={app.status !== 'pending' ? { marginLeft: '0px' } : {}} onClick={() => handleDeleteAppointment(app.id)} title="Supprimer">
+                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -336,7 +382,14 @@ const AdminDashboard = () => {
                     <div className="dashboard-card animate-fadeInUp">
                         <div className="card-header">
                             <h2>Liste des Patients</h2>
-                            <input type="text" placeholder="Rechercher..." className="search-input" style={{ padding: '6px 12px', borderRadius: '4px', border: '1px solid #ddd' }} />
+                            <input 
+                                type="text" 
+                                placeholder="Rechercher (Nom, Email, Tél)..." 
+                                className="search-input" 
+                                style={{ padding: '6px 12px', borderRadius: '4px', border: '1px solid #ddd' }} 
+                                value={patientSearch}
+                                onChange={(e) => setPatientSearch(e.target.value)}
+                            />
                         </div>
                         <div className="table-responsive">
                             <table className="admin-table">
@@ -361,19 +414,25 @@ const AdminDashboard = () => {
                                             </tr>
                                         ))
                                     ) : (
-                                        patients.map(p => (
-                                            <tr key={p.id}>
-                                                <td className="font-medium">{p.name}</td>
-                                                <td>{p.email || 'N/A'}</td>
-                                                <td>{p.phone}</td>
-                                                <td>---</td>
-                                                <td>
-                                                    <button className="action-btn view" title="Voir dossier">
-                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                                                    </button>
-                                                </td>
+                                        filteredPatientsList.length > 0 ? (
+                                            filteredPatientsList.map(p => (
+                                                <tr key={p.id || p.phone}>
+                                                    <td className="font-medium">{p.name}</td>
+                                                    <td>{p.email || 'N/A'}</td>
+                                                    <td>{p.phone}</td>
+                                                    <td>---</td>
+                                                    <td>
+                                                        <button className="action-btn view" title="Voir dossier">
+                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>Aucun patient trouvé.</td>
                                             </tr>
-                                        ))
+                                        )
                                     )}
                                 </tbody>
                             </table>
@@ -427,6 +486,9 @@ const AdminDashboard = () => {
                                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                                                             </button>
                                                         )}
+                                                        <button className="action-btn cross" onClick={() => handleDeleteMessage(msg.id)} title="Supprimer">
+                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -452,6 +514,7 @@ const AdminDashboard = () => {
                                         <th>Email</th>
                                         <th>Rôle</th>
                                         <th>Inscrit le</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -475,6 +538,15 @@ const AdminDashboard = () => {
                                                     </span>
                                                 </td>
                                                 <td>{new Date(u.created_at).toLocaleDateString()}</td>
+                                                <td>
+                                                    {!u.is_admin && (
+                                                        <div className="actions">
+                                                            <button className="action-btn cross" style={{ marginLeft: '0px' }} onClick={() => handleDeleteUser(u)} title="Supprimer l'utilisateur">
+                                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </td>
                                             </tr>
                                         ))
                                     )}

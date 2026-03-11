@@ -128,4 +128,25 @@ class UserDashboardController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Delete an appointment by the user
+     */
+    public function destroyAppointment(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
+            $appointment = $user->appointments()->findOrFail($id);
+            
+            $appointment->delete();
+
+            return response()->json([
+                'message' => 'Rendez-vous supprimé avec succès'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la suppression du rendez-vous'
+            ], 500);
+        }
+    }
 }

@@ -25,6 +25,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const login = (credentials) => api.post('/login', credentials);
+export const getUserProfile = () => api.get('/user');
 export const getDashboardData = () => api.get('/dashboard');
 export const toggleServiceSelection = (serviceId) => api.post(`/services/${serviceId}/toggle-selection`);
 
@@ -46,12 +47,14 @@ export const googleOAuthLogin = (token) => api.post('/admin/google-login', { tok
 export const getDashboardStats = () => api.get('/admin/dashboard');
 export const getAppointments = () => api.get('/admin/appointments');
 export const updateAppointmentStatus = (id, status) => api.patch(`/admin/appointments/${id}`, { status });
+export const deleteAppointment = (id) => api.delete(`/admin/appointments/${id}`);
 export const getMessages = () => api.get('/admin/messages');
 export const updateMessageStatus = (id, is_read) => api.patch(`/admin/messages/${id}`, { is_read });
 export const replyToMessage = (id, reply) => api.post(`/admin/messages/${id}/reply`, { reply });
 export const deleteMessage = (id) => api.delete(`/admin/messages/${id}`);
 export const getPatients = () => api.get('/admin/patients');
 export const getUsers = () => api.get('/admin/users');
+export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
 
 // Daily PDF Reports
 export const getReportPreview = () => api.get('/admin/reports/today');
@@ -72,3 +75,4 @@ export default api;
 // User Dashboard
 export const markReplyAsRead = (id) => api.patch(`/dashboard/messages/${id}/mark-read`);
 export const deleteUserMessage = (id) => api.delete(`/dashboard/messages/${id}`);
+export const deleteUserAppointment = (id) => api.delete(`/dashboard/appointments/${id}`);

@@ -120,6 +120,7 @@ class AuthController extends Controller
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
                     'auth_provider' => 'google',
                     'is_admin' => false,
                 ]);
@@ -127,6 +128,7 @@ class AuthController extends Controller
                 // Update existing user if needed
                 $user->update([
                     'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
                     'auth_provider' => 'google'
                 ]);
             }

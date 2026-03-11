@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     // Appointment Management
     Route::get('/admin/appointments', [AppointmentController::class, 'index']);
     Route::patch('/admin/appointments/{id}', [AppointmentController::class, 'updateStatus']);
+    Route::delete('/admin/appointments/{id}', [AppointmentController::class, 'destroy']);
 
     // Messages
     Route::get('/admin/messages', [ContactController::class, 'index']);
@@ -46,6 +47,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
 
     // Admin Users Management
     Route::get('/admin/users', [AdminController::class, 'users']);
+    Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser']);
 
     // Patients (from appointments)
     Route::get('/admin/patients', [AdminController::class, 'patients']);
@@ -71,4 +73,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/services/{id}/toggle-selection', [\App\Http\Controllers\Api\UserDashboardController::class, 'toggleSelection']);
     Route::patch('/dashboard/messages/{id}/mark-read', [\App\Http\Controllers\Api\UserDashboardController::class, 'markReplyRead']);
     Route::delete('/dashboard/messages/{id}', [\App\Http\Controllers\Api\UserDashboardController::class, 'destroy']);
+    Route::delete('/dashboard/appointments/{id}', [\App\Http\Controllers\Api\UserDashboardController::class, 'destroyAppointment']);
 });
