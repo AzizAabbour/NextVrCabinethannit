@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Rapport Quotidien – {{ $date->toDateString() }}</title>
     <style>
-        /* ── Base ─────────────────────────────────────────────────────── */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -14,11 +13,6 @@
             color: #1a1520;
             background: #ffffff;
         }
-
-        /* ── Color System (Cabinet Hannit) ────────────────────────────── */
-        /* Primary: #c23464  |  Accent: #7600da  |  Secondary: #da0067  */
-
-        /* ── Header ──────────────────────────────────────────────────── */
         .report-header {
             text-align: center;
             padding: 28px 0 20px;
@@ -65,8 +59,6 @@
             margin-top: 6px;
             letter-spacing: 1px;
         }
-
-        /* ── Summary Cards ───────────────────────────────────────────── */
         .summary-grid {
             width: 100%;
             border-collapse: separate;
@@ -108,8 +100,6 @@
 
         .summary-card.secondary .card-value { color: #da0067; }
         .summary-card.secondary { border-color: rgba(218, 0, 103, 0.15); }
-
-        /* ── Section Titles ──────────────────────────────────────────── */
         .section-title {
             font-size: 14px;
             font-weight: 700;
@@ -132,8 +122,6 @@
             margin-left: 10px;
             vertical-align: middle;
         }
-
-        /* ── Tables ──────────────────────────────────────────────────── */
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -169,8 +157,6 @@
             vertical-align: top;
             color: #4a4550;
         }
-
-        /* ── Status Badges ───────────────────────────────────────────── */
         .status {
             display: inline-block;
             padding: 3px 10px;
@@ -220,8 +206,6 @@
             background: rgba(245, 158, 11, 0.12);
             color: #b45309;
         }
-
-        /* ── Appointment Status Breakdown ────────────────────────────── */
         .status-breakdown {
             width: 100%;
             border-collapse: separate;
@@ -244,8 +228,6 @@
             display: block;
             margin-bottom: 2px;
         }
-
-        /* ── Empty State ─────────────────────────────────────────────── */
         .empty-state {
             text-align: center;
             padding: 24px;
@@ -257,8 +239,6 @@
             margin-bottom: 18px;
             font-size: 10px;
         }
-
-        /* ── Footer ──────────────────────────────────────────────────── */
         .report-footer {
             margin-top: 36px;
             padding-top: 16px;
@@ -278,7 +258,6 @@
 
         .report-footer .generated-at { margin-bottom: 4px; }
 
-        /* ── Decorative ──────────────────────────────────────────────── */
         .accent-dot {
             display: inline-block;
             width: 6px;
@@ -299,9 +278,7 @@
 </head>
 <body>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- HEADER                                                        -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+
     <div class="report-header">
         <div class="clinic-name">✦ Cabinet Hannit ✦</div>
         <h1>Rapport d'Activité Quotidien</h1>
@@ -309,9 +286,6 @@
         <div class="report-id">ID: RPT-{{ $date->format('Ymd') }}-{{ strtoupper(substr(md5($date->toDateString()), 0, 6)) }}</div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- SUMMARY CARDS                                                 -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <table class="summary-grid">
         <tr>
             <td>
@@ -334,10 +308,6 @@
             </td>
         </tr>
     </table>
-
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- APPOINTMENTS SECTION                                          -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="section-title">
         <span class="accent-dot"></span>Rendez-vous
         <span class="badge">{{ $summary['total_appointments'] }}</span>
@@ -415,9 +385,6 @@
         <div class="empty-state">Aucun rendez-vous créé ou mis à jour aujourd'hui.</div>
     @endif
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- MESSAGES SECTION                                              -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="section-title">
         <span class="accent-dot"></span>Messages de Contact
         <span class="badge">{{ $summary['total_messages'] }}</span>
@@ -464,9 +431,6 @@
         <div class="empty-state">Aucun message créé ou mis à jour aujourd'hui.</div>
     @endif
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- NEW USERS SECTION                                             -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="section-title">
         <span class="accent-dot"></span>Nouvelles Inscriptions
         <span class="badge">{{ $summary['new_users'] }}</span>
@@ -499,9 +463,6 @@
         <div class="empty-state">Aucune nouvelle inscription aujourd'hui.</div>
     @endif
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
-    <!-- FOOTER                                                        -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="report-footer">
         <div class="generated-at">
             Généré le {{ now()->format('d/m/Y à H:i:s') }}
