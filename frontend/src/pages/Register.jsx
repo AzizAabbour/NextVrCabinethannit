@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../services/api';
 import ScrollReveal from '../components/ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
 import './Register.css';
 
 const Register = () => {
+    const { t } = useLanguage();
+    const tr = translations.registerPage;
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
@@ -25,33 +29,30 @@ const Register = () => {
         setError('');
 
         if (formData.password !== formData.password_confirmation) {
-            setError('Les mots de passe ne correspondent pas.');
+            setError(t(tr.errorMismatch));
             setLoading(false);
             return;
         }
 
         try {
             await registerUser(formData);
-            // Redirect to login page as requested
-            navigate('/connexion', { state: { message: 'Inscription réussie ! Veuillez vous connecter.' } });
+            // Redirect to login page
+            navigate('/connexion', { state: { message: t(tr.successMsg) } });
         } catch (err) {
             console.error('Registration error:', err);
             if (err.response) {
-                // The server responded with a status code outside the range of 2xx
                 if (err.response.status === 422 && err.response.data?.errors) {
                     const firstError = Object.values(err.response.data.errors)[0][0];
                     setError(firstError);
                 } else if (err.response.status === 500) {
-                    setError('Erreur serveur (500). Veuillez vérifier que votre base de données est bien configurée et accessible.');
+                    setError(t(tr.errorServer));
                 } else {
-                    setError(`Une erreur est survenue (${err.response.status}). Veuillez réessayer.`);
+                    setError(t({ fr: 'Une erreur est survenue (', ar: 'حدث خطأ (' }) + err.response.status + ')');
                 }
             } else if (err.request) {
-                // The request was made but no response was received
-                setError('Impossible de contacter le serveur. Veuillez vérifier que le backend est bien lancé.');
+                setError(t({ fr: 'Impossible de contacter le serveur.', ar: 'تعذر الاتصال بالخادم.' }));
             } else {
-                // Something happened in setting up the request
-                setError('Une erreur est survenue lors de l\'inscription.');
+                setError(t(tr.errorGeneric));
             }
         } finally {
             setLoading(false);
@@ -66,8 +67,8 @@ const Register = () => {
                         <div className="cabinet-logo">
                             <img src="/logo.png" alt="Cabinet Hannit" style={{ width: '60px', height: '60px' }} />
                         </div>
-                        <h2>Créer un compte</h2>
-                        <p>Inscrivez-vous pour un suivi personnalisé</p>
+                        <h2>{t(tr.title)}</h2>
+                        <p>{t(tr.subtitle)}</p>
                     </div>
 
                     {error && (
@@ -83,7 +84,7 @@ const Register = () => {
 
                     <form onSubmit={handleRegister} className="register-form">
                         <div className="form-group">
-                            <label htmlFor="name">Nom complet</label>
+                            <label htmlFor="name">{t(tr.nameLabel)}</label>
                             <input
                                 type="text"
                                 id="name"
@@ -92,11 +93,11 @@ const Register = () => {
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
-                                placeholder="Votre nom"
+                                placeholder={t(tr.placeholderName)}
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="email">Email</label>
+                            <label htmlFor="email">{t(tr.emailLabel)}</label>
                             <input
                                 type="email"
                                 id="email"
@@ -105,11 +106,11 @@ const Register = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                placeholder="votre@email.com"
+                                placeholder={t(tr.placeholderEmail)}
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="password">Mot de passe</label>
+                            <label htmlFor="password">{t(tr.passwordLabel)}</label>
                             <input
                                 type="password"
                                 id="password"
@@ -118,11 +119,11 @@ const Register = () => {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
-                                placeholder="••••••••"
+                                placeholder={t(tr.placeholderPassword)}
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="password_confirmation">Confirmer le mot de passe</label>
+                            <label htmlFor="password_confirmation">{t(tr.confirmPasswordLabel)}</label>
                             <input
                                 type="password"
                                 id="password_confirmation"
@@ -131,21 +132,21 @@ const Register = () => {
                                 value={formData.password_confirmation}
                                 onChange={handleChange}
                                 required
-                                placeholder="••••••••"
+                                placeholder={t(tr.placeholderPassword)}
                             />
                         </div>
                         <button type="submit" className="btn btn-primary btn-block" style={{ width: '100%', height: '52px' }} disabled={loading}>
                             {loading ? (
                                 <>
                                     <span className="spinner-small" style={{ marginRight: '10px' }}></span>
-                                    Inscription en cours...
+                                    {t(tr.registering)}
                                 </>
-                            ) : 'S\'inscrire'}
+                            ) : t(tr.registerBtn)}
                         </button>
                     </form>
 
                     <div className="register-footer">
-                        <p>Déjà un compte ? <Link to="/connexion">Connectez-vous ici</Link></p>
+                        <p>{t(tr.hasAccount)} <Link to="/connexion">{t(tr.loginLink)}</Link></p>
                     </div>
                 </ScrollReveal>
             </div>

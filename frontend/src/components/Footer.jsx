@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
 import './Footer.css';
 
 /**
- * Footer - Professional footer with contact info, links, and hours
+ * Footer - Professional footer with i18n support (FR / AR)
  */
 const Footer = () => {
     const location = useLocation();
+    const { t } = useLanguage();
+    const tr = translations.footer;
     const isAdmin = location.pathname.startsWith('/admin');
     if (isAdmin) return null;
 
@@ -25,12 +29,11 @@ const Footer = () => {
                             <img src="/logo.png" alt="Cabinet Hannit" style={{ width: '40px', height: '40px', marginRight: '10px' }} />
                             <div>
                                 <h3 className="footer-brand-name">Cabinet Hannit</h3>
-                                <span className="footer-brand-tagline">Kinésithérapie</span>
+                                <span className="footer-brand-tagline">{t(translations.nav.tagline)}</span>
                             </div>
                         </div>
                         <p className="footer-description">
-                            Cabinet spécialisé en kinésithérapie et physiothérapie à Casablanca.
-                            Votre santé est notre priorité depuis 2017.
+                            {t(tr.description)}
                         </p>
                         <div className="footer-social">
                             <a href="#" className="social-link" aria-label="Facebook">
@@ -53,33 +56,33 @@ const Footer = () => {
 
                     {/* Quick Links */}
                     <div className="footer-column">
-                        <h4 className="footer-heading">Liens Rapides</h4>
+                        <h4 className="footer-heading">{t(tr.quickLinks)}</h4>
                         <ul className="footer-links">
-                            <li><Link to="/">Accueil</Link></li>
-                            <li><Link to="/a-propos">À propos</Link></li>
-                            <li><Link to="/services">Services</Link></li>
-                            <li><Link to="/equipe">Notre Équipe</Link></li>
-                            <li><Link to="/contact">Contact</Link></li>
-                            <li><Link to="/rendez-vous">Rendez-vous</Link></li>
+                            <li><Link to="/">{t(tr.home)}</Link></li>
+                            <li><Link to="/a-propos">{t(tr.aboutLink)}</Link></li>
+                            <li><Link to="/services">{t(tr.servicesLink)}</Link></li>
+                            <li><Link to="/equipe">{t(tr.teamLink)}</Link></li>
+                            <li><Link to="/contact">{t(tr.contactLink)}</Link></li>
+                            <li><Link to="/rendez-vous">{t(tr.appointmentLink)}</Link></li>
                         </ul>
                     </div>
 
                     {/* Services */}
                     <div className="footer-column">
-                        <h4 className="footer-heading">Nos Services</h4>
+                        <h4 className="footer-heading">{t(tr.ourServices)}</h4>
                         <ul className="footer-links">
-                            <li><Link to="/services">Kinésithérapie</Link></li>
-                            <li><Link to="/services">Physiothérapie</Link></li>
-                            <li><Link to="/services">Amincissement</Link></li>
-                            <li><Link to="/services">Traumatologie</Link></li>
-                            <li><Link to="/services">Rhumatologie</Link></li>
-                            <li><Link to="/services">Neurologie</Link></li>
+                            <li><Link to="/services">{t(tr.kine)}</Link></li>
+                            <li><Link to="/services">{t(tr.physio)}</Link></li>
+                            <li><Link to="/services">{t(tr.amincissement)}</Link></li>
+                            <li><Link to="/services">{t(tr.traumatologie)}</Link></li>
+                            <li><Link to="/services">{t(tr.rhumatologie)}</Link></li>
+                            <li><Link to="/services">{t(tr.neurologie)}</Link></li>
                         </ul>
                     </div>
 
                     {/* Contact Info */}
                     <div className="footer-column">
-                        <h4 className="footer-heading">Contact</h4>
+                        <h4 className="footer-heading">{t(tr.contact)}</h4>
                         <div className="footer-contact-list">
                             <div className="footer-contact-item">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -103,7 +106,7 @@ const Footer = () => {
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
                                 </svg>
-                                <span>Lun - Ven: 9h - 18h<br />Sam: 10h - 15h</span>
+                                <span>{t(tr.hours)}<br />{t(tr.satHours)}</span>
                             </div>
                         </div>
                     </div>
@@ -113,9 +116,9 @@ const Footer = () => {
             {/* Bottom Bar */}
             <div className="footer-bottom">
                 <div className="container footer-bottom-content">
-                    <p>&copy; {new Date().getFullYear()} Cabinet Hannit. Tous droits réservés.</p>
+                    <p>&copy; {new Date().getFullYear()} Cabinet Hannit. {t(tr.rights)}</p>
                     <p className="footer-credits">
-                        Conçu avec <span className="heart">♥</span> pour votre santé
+                        {t(tr.madeWith)} <span className="heart">♥</span> {t(tr.forHealth)}
                     </p>
                 </div>
             </div>

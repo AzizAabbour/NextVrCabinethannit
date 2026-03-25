@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
 import './SplashScreen.css';
+
 const heroImage = `${import.meta.env.BASE_URL}logo.png`;
 
 const SplashScreen = ({ onFinish }) => {
+    const { t } = useLanguage();
+    const tr = translations.hero; // Using hero slogan for consistency
+    
     const [isVisible, setIsVisible] = useState(true);
     const [animateLogo, setAnimateLogo] = useState(false);
 
@@ -39,7 +45,7 @@ const SplashScreen = ({ onFinish }) => {
                 <div className="splash-text">
                     <h1 className="splash-brand">Cabinet Hannit</h1>
                     <div className="splash-slogan-wrapper">
-                        <p className="splash-slogan">Le meilleur pour votre santé</p>
+                        <p className="splash-slogan">{t(tr.slogan)}</p>
                         <div className="splash-line"></div>
                     </div>
                 </div>

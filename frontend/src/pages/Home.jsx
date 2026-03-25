@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ScrollReveal from '../components/ScrollReveal';
 import TiltCard from '../components/TiltCard';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
 import './Home.css';
 
 /* ── Inline SVG Icons ── */
@@ -64,35 +66,13 @@ const icons = {
     ),
 };
 
-const specialties = [
-    { icon: icons.trauma, title: 'Traumatologique', desc: 'Rééducation après blessures et traumatismes' },
-    { icon: icons.rhuma, title: 'Rhumatologique', desc: 'Traitement des maladies articulaires' },
-    { icon: icons.neuro, title: 'Neurologiques', desc: 'Rééducation neurologique spécialisée' },
-];
-
-const servicesData = [
-    { icon: icons.amincissement, title: 'Amincissement', desc: 'Programme d\'amincissement personnalisé avec des techniques modernes et un suivi professionnel.' },
-    { icon: icons.physio, title: 'Physiothérapie', desc: 'Traitement et prévention des troubles physiques par des méthodes naturelles et manuelles.' },
-    { icon: icons.kine, title: 'Kinésithérapie', desc: 'Rééducation fonctionnelle complète pour retrouver mobilité et bien-être au quotidien.' },
-    { icon: icons.trauma, title: 'Traumatologie', desc: 'Prise en charge spécialisée des blessures traumatiques et rééducation post-opératoire.' },
-    { icon: icons.rhuma, title: 'Rhumatologie', desc: 'Soulagement des douleurs articulaires et musculaires par des soins adaptés.' },
-    { icon: icons.neuro, title: 'Neurologie', desc: 'Rééducation neurologique pour les troubles du système nerveux central et périphérique.' },
-];
-
-const testimonials = [
-    { name: 'Fatima Z.', text: 'Un cabinet exceptionnel ! L\'équipe est très professionnelle et attentionnée. Je recommande vivement pour tout type de rééducation.', rating: 5 },
-    { name: 'Mohammed A.', text: 'Après mon accident, Cabinet Hannit m\'a aidé à retrouver ma mobilité. Les soins sont de qualité et le suivi est excellent.', rating: 5 },
-    { name: 'Sara M.', text: 'Très satisfaite des séances de physiothérapie. L\'ambiance est chaleureuse et les résultats sont au rendez-vous.', rating: 5 },
-];
-
-const faqs = [
-    { q: 'Comment prendre rendez-vous ?', a: 'Vous pouvez prendre rendez-vous en ligne via notre site, par téléphone au +212 644 574 537, ou directement au cabinet.' },
-    { q: 'Quels types de soins proposez-vous ?', a: 'Nous proposons la kinésithérapie, la physiothérapie, la rééducation traumatologique, rhumatologique, neurologique, ainsi que des programmes d\'amincissement.' },
-    { q: 'Les séances sont-elles remboursées ?', a: 'Oui, nos séances sont prises en charge par la plupart des mutuelles et assurances maladie. Contactez-nous pour plus de détails.' },
-    { q: 'Quelle est la durée d\'une séance ?', a: 'Une séance dure généralement entre 30 et 60 minutes selon le type de traitement et les besoins du patient.' },
-];
+const serviceIcons = [icons.amincissement, icons.physio, icons.kine, icons.trauma, icons.rhuma, icons.neuro];
+const specialtyIcons = [icons.trauma, icons.rhuma, icons.neuro];
 
 const Home = () => {
+    const { t, language } = useLanguage();
+    const tr = translations;
+
     const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
     useEffect(() => {
@@ -106,24 +86,21 @@ const Home = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+            setCurrentTestimonial((prev) => (prev + 1) % tr.testimonials.items.length);
         }, 5000);
         return () => clearInterval(interval);
     }, []);
 
     const nextTestimonial = () => {
-        setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+        setCurrentTestimonial((prev) => (prev + 1) % tr.testimonials.items.length);
     };
 
     const prevTestimonial = () => {
-        setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+        setCurrentTestimonial((prev) => (prev - 1 + tr.testimonials.items.length) % tr.testimonials.items.length);
     };
 
     const [touchStart, setTouchStart] = useState(null);
-
     const [touchEnd, setTouchEnd] = useState(null);
-
-    // Minimum swipe distance (pixels)
     const minSwipeDistance = 50;
 
     const onTouchStart = (e) => {
@@ -147,10 +124,6 @@ const Home = () => {
         }
     };
 
-
-
-
-    // Variable pour l'image (facile à changer pour l'hébergement)
     const heroImage = `${import.meta.env.BASE_URL}hero.jpeg`;
 
     return (
@@ -166,34 +139,32 @@ const Home = () => {
 
                 <div className="container hero-content">
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
+                        initial={{ opacity: 0, x: language === 'ar' ? 50 : -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
                         className="hero-text"
                     >
                         <div className="hero-badge">
                             <span className="hero-badge-dot"></span>
-                            Cabinet de Kinésithérapie à Casablanca
+                            {t(tr.hero.badge)}
                         </div>
                         <h1 className="hero-title">
                             Cabinet <span className="gradient-text">Hannit</span>
                             <br />
-                            <span className="hero-title-sub">Le meilleur pour votre santé</span>
+                            <span className="hero-title-sub">{t(tr.hero.titleSub)}</span>
                         </h1>
                         <p className="hero-description">
-                            L'information, l'utilisation et la connaissance croissante de la
-                            physiothérapie sont parmi les facteurs les plus importants pour votre
-                            bien-être. Nous mettons notre expertise à votre service.
+                            {t(tr.hero.description)}
                         </p>
                         <div className="hero-actions">
                             <Link to="/rendez-vous" className="btn btn-primary btn-lg" id="hero-appointment-btn">
-                                Prendre Rendez-vous
+                                {t(tr.hero.appointmentBtn)}
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                                 </svg>
                             </Link>
                             <Link to="/services" className="btn btn-secondary btn-lg" id="hero-services-btn">
-                                Nos Services
+                                {t(tr.hero.servicesBtn)}
                             </Link>
                         </div>
                     </motion.div>
@@ -205,7 +176,6 @@ const Home = () => {
                         className="hero-visual"
                     >
                         <div className="hero-visual-container">
-                            {/* Hero Image with 3D Tilt */}
                             <TiltCard className="hero-image-wrapper">
                                 <img
                                     src={heroImage}
@@ -217,14 +187,14 @@ const Home = () => {
                                     <div className="floating-card-icon">{icons.check}</div>
                                     <div>
                                         <strong>+2000</strong>
-                                        <span>Patients satisfaits</span>
+                                        <span>{t(tr.hero.patients)}</span>
                                     </div>
                                 </div>
                                 <div className="hero-floating-card hero-card-2" style={{ transform: 'translateZ(150px)' }}>
                                     <div className="floating-card-icon accent">{icons.clock}</div>
                                     <div>
-                                        <strong>Depuis 2017</strong>
-                                        <span>À votre service</span>
+                                        <strong>{t(tr.hero.since)}</strong>
+                                        <span>{t(tr.hero.atService)}</span>
                                     </div>
                                 </div>
                             </TiltCard>
@@ -235,12 +205,12 @@ const Home = () => {
                 {/* Specialty cards */}
                 <div className="container">
                     <div className="hero-specialties">
-                        {specialties.map((spec, i) => (
+                        {tr.specialties.map((spec, i) => (
                             <ScrollReveal key={i} delay={0.2 * i}>
                                 <TiltCard className="specialty-card">
-                                    <div className="specialty-icon" style={{ transform: 'translateZ(40px)' }}>{spec.icon}</div>
-                                    <h3 className="specialty-title" style={{ transform: 'translateZ(30px)' }}>{spec.title}</h3>
-                                    <p className="specialty-desc" style={{ transform: 'translateZ(20px)' }}>{spec.desc}</p>
+                                    <div className="specialty-icon" style={{ transform: 'translateZ(40px)' }}>{specialtyIcons[i]}</div>
+                                    <h3 className="specialty-title" style={{ transform: 'translateZ(30px)' }}>{t(spec.title)}</h3>
+                                    <p className="specialty-desc" style={{ transform: 'translateZ(20px)' }}>{t(spec.desc)}</p>
                                 </TiltCard>
                             </ScrollReveal>
                         ))}
@@ -269,41 +239,28 @@ const Home = () => {
                             </TiltCard>
                             <div className="about-experience-badge">
                                 <span className="experience-number">8+</span>
-                                <span className="experience-text">Années d'expérience</span>
+                                <span className="experience-text">{t(tr.about.experience)}</span>
                             </div>
                         </ScrollReveal>
                         <ScrollReveal direction="right" delay={0.2} className="about-content">
-                            <span className="section-subtitle">À propos de nous</span>
-                            <h2 className="section-title">Les gens nous font confiance</h2>
+                            <span className="section-subtitle">{t(tr.about.subtitle)}</span>
+                            <h2 className="section-title">{t(tr.about.title)}</h2>
                             <p className="about-highlight">
-                                Parce que nos patients sont notre famille
+                                {t(tr.about.highlight)}
                             </p>
                             <p className="about-description">
-                                Cabinet Hannit a été fondée en 2017 par Asmaa HANNIT, kinésithérapeute.
-                                Sa vision et son rêve de créer un environnement de travail interdisciplinaire
-                                où le professionnel n'est plus un thérapeute isolé, mais bien un membre d'une
-                                équipe synergique, l'ont amené à créer cette clinique.
+                                {t(tr.about.description)}
                             </p>
                             <ul className="about-features">
-                                <li>
-                                    <span className="feature-icon">{icons.check}</span>
-                                    Équipe de professionnels qualifiés
-                                </li>
-                                <li>
-                                    <span className="feature-icon">{icons.check}</span>
-                                    Équipements modernes et de pointe
-                                </li>
-                                <li>
-                                    <span className="feature-icon">{icons.check}</span>
-                                    Suivi personnalisé pour chaque patient
-                                </li>
-                                <li>
-                                    <span className="feature-icon">{icons.check}</span>
-                                    Approche thérapeutique holistique
-                                </li>
+                                {tr.about.features.map((feature, i) => (
+                                    <li key={i}>
+                                        <span className="feature-icon">{icons.check}</span>
+                                        {t(feature)}
+                                    </li>
+                                ))}
                             </ul>
                             <Link to="/a-propos" className="btn btn-primary" id="home-about-btn">
-                                En savoir plus
+                                {t(tr.about.learnMore)}
                             </Link>
                         </ScrollReveal>
                     </div>
@@ -314,15 +271,10 @@ const Home = () => {
             <section className="stats-section visible">
                 <div className="container">
                     <div className="stats-grid">
-                        {[
-                            { number: '2000+', label: 'Patients Traités' },
-                            { number: '8+', label: 'Ans d\'expérience' },
-                            { number: '6', label: 'Services Spécialisés' },
-                            { number: '98%', label: 'Satisfaction' },
-                        ].map((stat, i) => (
+                        {tr.stats.map((stat, i) => (
                             <ScrollReveal key={i} delay={i * 0.1} className="stat-item visible">
                                 <span className="stat-number">{stat.number}</span>
-                                <span className="stat-label">{stat.label}</span>
+                                <span className="stat-label">{t(stat.label)}</span>
                             </ScrollReveal>
                         ))}
                     </div>
@@ -333,26 +285,26 @@ const Home = () => {
             <section className="section services-section visible">
                 <div className="container">
                     <ScrollReveal className="section-header">
-                        <span className="section-subtitle">Nos Services</span>
-                        <h2 className="section-title">Découvrez nos services</h2>
+                        <span className="section-subtitle">{t(tr.services.subtitle)}</span>
+                        <h2 className="section-title">{t(tr.services.title)}</h2>
                         <p className="section-description">
-                            Des soins de qualité adaptés à vos besoins, dispensés par une équipe de professionnels passionnés.
+                            {t(tr.services.description)}
                         </p>
                     </ScrollReveal>
 
                     <div className="services-grid">
-                        {servicesData.map((service, i) => (
+                        {tr.services.items.map((service, i) => (
                             <ScrollReveal
                                 key={i}
                                 delay={i * 0.1}
                                 className="visible"
                             >
                                 <TiltCard className="service-card card">
-                                    <div className="service-card-icon" style={{ transform: 'translateZ(50px)' }}>{service.icon}</div>
-                                    <h3 className="service-card-title" style={{ transform: 'translateZ(40px)' }}>{service.title}</h3>
-                                    <p className="service-card-desc" style={{ transform: 'translateZ(30px)' }}>{service.desc}</p>
+                                    <div className="service-card-icon" style={{ transform: 'translateZ(50px)' }}>{serviceIcons[i]}</div>
+                                    <h3 className="service-card-title" style={{ transform: 'translateZ(40px)' }}>{t(service.title)}</h3>
+                                    <p className="service-card-desc" style={{ transform: 'translateZ(30px)' }}>{t(service.desc)}</p>
                                     <Link to="/services" className="service-card-link" style={{ transform: 'translateZ(20px)' }}>
-                                        En savoir plus
+                                        {t(tr.services.learnMore)}
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                                         </svg>
@@ -368,7 +320,7 @@ const Home = () => {
                             {icons.phone}
                             <div>
                                 <span className="emergency-number">+212 644 574 537</span>
-                                <span className="emergency-text">Appelez-nous pour obtenir une aide d'urgence</span>
+                                <span className="emergency-text">{t(tr.services.emergency)}</span>
                             </div>
                         </a>
                     </div>
@@ -379,8 +331,8 @@ const Home = () => {
             <section className="section testimonials-section visible">
                 <div className="container">
                     <ScrollReveal className="section-header">
-                        <span className="section-subtitle">Témoignages</span>
-                        <h2 className="section-title">Ce que disent nos patients</h2>
+                        <span className="section-subtitle">{t(tr.testimonials.subtitle)}</span>
+                        <h2 className="section-title">{t(tr.testimonials.title)}</h2>
                     </ScrollReveal>
                     <ScrollReveal delay={0.2} className="testimonials-carousel-wrapper">
                         <div
@@ -388,21 +340,21 @@ const Home = () => {
                             onTouchMove={onTouchMove}
                             onTouchEnd={onTouchEnd}
                         >
-                            <div className="testimonials-carousel" style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
-                                {testimonials.map((t, i) => (
+                            <div className="testimonials-carousel" style={{ transform: `translateX(${language === 'ar' ? '' : '-'}${currentTestimonial * 100}%)` }}>
+                                {tr.testimonials.items.map((tItem, i) => (
                                     <div key={i} className="testimonial-slide">
                                         <div className="testimonial-card card">
                                             <div className="testimonial-stars">
-                                                {Array.from({ length: t.rating }, (_, j) => (
+                                                {Array.from({ length: tItem.rating }, (_, j) => (
                                                     <span key={j} className="star">{icons.star}</span>
                                                 ))}
                                             </div>
-                                            <p className="testimonial-text">"{t.text}"</p>
+                                            <p className="testimonial-text">"{t(tItem.text)}"</p>
                                             <div className="testimonial-author">
-                                                <div className="testimonial-avatar">{t.name.charAt(0)}</div>
+                                                <div className="testimonial-avatar">{tItem.name.charAt(0)}</div>
                                                 <div className="testimonial-meta">
-                                                    <span className="testimonial-name">{t.name}</span>
-                                                    <span className="testimonial-status">Patient Vérifié</span>
+                                                    <span className="testimonial-name">{tItem.name}</span>
+                                                    <span className="testimonial-status">{t(tr.testimonials.verified)}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -411,12 +363,12 @@ const Home = () => {
                             </div>
 
                             <div className="carousel-controls">
-                                <button className="carousel-btn prev" onClick={prevTestimonial} aria-label="Précédent">
+                                <button className="carousel-btn prev" onClick={prevTestimonial} aria-label="Previous">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <polyline points="15 18 9 12 15 6" />
                                     </svg>
                                 </button>
-                                <button className="carousel-btn next" onClick={nextTestimonial} aria-label="Suivant">
+                                <button className="carousel-btn next" onClick={nextTestimonial} aria-label="Next">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <polyline points="9 18 15 12 9 6" />
                                     </svg>
@@ -424,12 +376,12 @@ const Home = () => {
                             </div>
 
                             <div className="carousel-dots">
-                                {testimonials.map((_, i) => (
+                                {tr.testimonials.items.map((_, i) => (
                                     <button
                                         key={i}
                                         className={`dot ${currentTestimonial === i ? 'active' : ''}`}
                                         onClick={() => setCurrentTestimonial(i)}
-                                        aria-label={`Aller au témoignage ${i + 1}`}
+                                        aria-label={`Testimonial ${i + 1}`}
                                     />
                                 ))}
                             </div>
@@ -443,26 +395,17 @@ const Home = () => {
                 <div className="container">
                     <div className="hours-grid">
                         <ScrollReveal direction="left" className="hours-content">
-                            <span className="section-subtitle">Horaires</span>
-                            <h2 className="section-title">Heures d'ouverture</h2>
+                            <span className="section-subtitle">{t(tr.hours.subtitle)}</span>
+                            <h2 className="section-title">{t(tr.hours.title)}</h2>
                             <p className="hours-description">
-                                Nous sommes disponibles pour vous accueillir du lundi au samedi.
-                                N'hésitez pas à nous contacter pour prendre rendez-vous.
+                                {t(tr.hours.description)}
                             </p>
                             <div className="hours-list">
-                                {[
-                                    { day: 'Lundi', hours: '9h00 - 18h00' },
-                                    { day: 'Mardi', hours: '9h00 - 18h00' },
-                                    { day: 'Mercredi', hours: '9h00 - 18h00' },
-                                    { day: 'Jeudi', hours: '9h00 - 18h00' },
-                                    { day: 'Vendredi', hours: '9h00 - 18h00' },
-                                    { day: 'Samedi', hours: '10h00 - 15h00' },
-                                    { day: 'Dimanche', hours: 'Fermé', closed: true },
-                                ].map((item, i) => (
+                                {tr.hours.days.map((item, i) => (
                                     <div key={i} className={`hours-row ${item.closed ? 'closed' : ''}`}>
-                                        <span className="hours-day">{item.day}</span>
+                                        <span className="hours-day">{t(item.day)}</span>
                                         <span className="hours-dots"></span>
-                                        <span className="hours-time">{item.hours}</span>
+                                        <span className="hours-time">{typeof item.hours === 'object' ? t(item.hours) : item.hours}</span>
                                     </div>
                                 ))}
                             </div>
@@ -470,12 +413,12 @@ const Home = () => {
                         <ScrollReveal direction="right" delay={0.2} className="hours-info">
                             <div className="info-card">
                                 <div className="info-card-icon">{icons.location}</div>
-                                <h4>Notre Adresse</h4>
+                                <h4>{t(tr.hours.address)}</h4>
                                 <p>32, Bd Chefchaouni, Résidence Dar Dounia, 1er Étage, App N°3, Casablanca</p>
                             </div>
                             <div className="info-card">
                                 <div className="info-card-icon">{icons.phone}</div>
-                                <h4>Téléphone</h4>
+                                <h4>{t(tr.hours.phone)}</h4>
                                 <p><a href="tel:+212644574537">+212 644 574 537</a></p>
                                 <p><a href="tel:+212522342569">+212 522 342 569</a></p>
                             </div>
@@ -488,21 +431,21 @@ const Home = () => {
             <section className="section faq-section visible">
                 <div className="container">
                     <ScrollReveal className="section-header">
-                        <span className="section-subtitle">FAQ</span>
-                        <h2 className="section-title">Questions Fréquentes</h2>
+                        <span className="section-subtitle">{t(tr.faq.subtitle)}</span>
+                        <h2 className="section-title">{t(tr.faq.title)}</h2>
                     </ScrollReveal>
                     <div className="faq-list">
-                        {faqs.map((faq, i) => (
+                        {tr.faq.items.map((faq, i) => (
                             <ScrollReveal key={i} delay={i * 0.1}>
                                 <div className={`faq-item ${openFaq === i ? 'open' : ''}`}>
                                     <button className="faq-question" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                                        <span>{faq.q}</span>
+                                        <span>{t(faq.q)}</span>
                                         <svg className="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <polyline points="6 9 12 15 18 9" />
                                         </svg>
                                     </button>
                                     <div className="faq-answer">
-                                        <p>{faq.a}</p>
+                                        <p>{t(faq.a)}</p>
                                     </div>
                                 </div>
                             </ScrollReveal>
@@ -517,15 +460,15 @@ const Home = () => {
                     <div className="cta-pattern"></div>
                 </div>
                 <ScrollReveal className="container cta-content">
-                    <h2 className="cta-title">Ne perdez pas votre temps</h2>
-                    <p className="cta-subtitle">Prenez rendez-vous en ligne dès maintenant</p>
+                    <h2 className="cta-title">{t(tr.cta.title)}</h2>
+                    <p className="cta-subtitle">{t(tr.cta.subtitle)}</p>
                     <div className="cta-actions">
                         <Link to="/rendez-vous" className="btn btn-white btn-lg" id="home-cta-appointment">
-                            Prendre Rendez-vous
+                            {t(tr.cta.appointment)}
                         </Link>
                         <a href="tel:+212644574537" className="btn btn-outline-white btn-lg">
                             {icons.phone}
-                            Appelez-nous
+                            {t(tr.cta.callUs)}
                         </a>
                     </div>
                 </ScrollReveal>

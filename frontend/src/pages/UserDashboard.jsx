@@ -2,8 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getDashboardData, toggleServiceSelection, markReplyAsRead, deleteUserMessage, deleteUserAppointment } from '../services/api';
 import './UserDashboard.css';
 import { Link, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
 
 const UserDashboard = () => {
+    const { t, language } = useLanguage();
+    const tr = translations.userDashboard;
+    const common = translations.common;
+
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,7 +29,7 @@ const UserDashboard = () => {
             } catch (err) {
                 console.error("Error fetching dashboard data:", err);
                 const detailedError = err.response?.data?.error || err.response?.data?.message || "";
-                setError("Impossible de charger les données du tableau de bord. " + detailedError);
+                setError(t(tr.errorDesc) + " " + detailedError);
                 if (err.response && err.response.status === 401) {
                     navigate('/connexion');
                 }
@@ -37,7 +43,7 @@ const UserDashboard = () => {
         const interval = setInterval(fetchDashboardData, 30000);
 
         return () => clearInterval(interval);
-    }, [navigate]);
+    }, [navigate, t, tr.errorDesc]);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -68,7 +74,7 @@ const UserDashboard = () => {
     };
 
     const handleDeleteMessage = async (msgId) => {
-        if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) return;
+        if (!window.confirm(t(tr.messages.deleteConfirm))) return;
 
         setDeletingId(msgId);
         try {
@@ -84,14 +90,14 @@ const UserDashboard = () => {
             if (expandedMessage === msgId) setExpandedMessage(null);
         } catch (err) {
             console.error("Error deleting message:", err);
-            alert("Une erreur est survenue lors de la suppression du message.");
+            alert(t(translations.contact.errorMsg));
         } finally {
             setDeletingId(null);
         }
     };
 
     const handleDeleteAppointment = async (apptId) => {
-        if (!window.confirm("Êtes-vous sûr de vouloir annuler et supprimer ce rendez-vous ?")) return;
+        if (!window.confirm(t(tr.appointments.deleteConfirm))) return;
 
         setDeletingApptId(apptId);
         try {
@@ -104,13 +110,9 @@ const UserDashboard = () => {
                     total_appointments: Math.max(0, prev.stats.total_appointments - 1)
                 }
             }));
-            // Update selected tab if all appointments are deleted
-            if (data.appointments.length === 1 && activeTab === 'appointments') {
-                 // Do nothing, just let it show empty state
-            }
         } catch (err) {
             console.error("Error deleting appointment:", err);
-            alert("Une erreur est survenue lors de la suppression du rendez-vous.");
+            alert(t(translations.appointment.errorMsg));
         } finally {
             setDeletingApptId(null);
         }
@@ -121,7 +123,7 @@ const UserDashboard = () => {
             <div className="user-dashboard">
                 <div className="dashboard-container" style={{ textAlign: 'center', padding: '100px 0' }}>
                     <div className="spinner" style={{ margin: '0 auto 20px' }}></div>
-                    <p>Chargement de votre espace personnel...</p>
+                    <p>{t(tr.loading)}</p>
                 </div>
             </div>
         );
@@ -132,12 +134,12 @@ const UserDashboard = () => {
             <div className="user-dashboard">
                 <div className="dashboard-container">
                     <div className="card" style={{ textAlign: 'center', borderTop: '4px solid var(--primary)', padding: '40px' }}>
-                        <h2 style={{ color: 'var(--primary)', marginBottom: '20px' }}>Oups !</h2>
+                        <h2 style={{ color: 'var(--primary)', marginBottom: '20px' }}>{t(tr.errorTitle)}</h2>
                         <div className="error-box" style={{ background: '#fff1f2', color: '#be123c', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #fda4af' }}>
                             {error}
                         </div>
                         <button onClick={() => window.location.reload()} className="btn btn-primary">
-                            Réessayer
+                            {t(tr.retry)}
                         </button>
                     </div>
                 </div>
@@ -160,24 +162,24 @@ const UserDashboard = () => {
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Service</th>
-                                        <th>Date</th>
-                                        <th>Heure</th>
-                                        <th>Statut</th>
-                                        <th>Actions</th>
+                                        <th>{t(tr.appointments.table.service)}</th>
+                                        <th>{t(tr.appointments.table.date)}</th>
+                                        <th>{t(tr.appointments.table.time)}</th>
+                                        <th>{t(tr.appointments.table.status)}</th>
+                                        <th>{t(tr.appointments.table.actions)}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {appointments.map(app => (
                                         <tr key={app.id}>
                                             <td>{app.service || 'N/A'}</td>
-                                            <td>{new Date(app.date).toLocaleDateString('fr-FR')}</td>
+                                            <td>{new Date(app.date).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR')}</td>
                                             <td>{app.time || '--:--'}</td>
                                             <td>
                                                 <span className={`status-badge status-${app.status}`}>
-                                                    {app.status === 'pending' ? 'En attente' :
-                                                        app.status === 'confirmed' ? 'Confirmé' :
-                                                            app.status === 'cancelled' ? 'Annulé' : app.status}
+                                                    {app.status === 'pending' ? t(tr.appointments.status.pending) :
+                                                        app.status === 'confirmed' ? t(tr.appointments.status.confirmed) :
+                                                            app.status === 'cancelled' ? t(tr.appointments.status.cancelled) : app.status}
                                                 </span>
                                             </td>
                                             <td>
@@ -185,7 +187,7 @@ const UserDashboard = () => {
                                                     className="delete-message-btn"
                                                     onClick={() => handleDeleteAppointment(app.id)}
                                                     disabled={deletingApptId === app.id}
-                                                    title="Supprimer le rendez-vous"
+                                                    title={t(tr.appointments.table.actions)}
                                                     style={{ position: 'relative', top: '0', right: '0', opacity: 1, visibility: 'visible', padding: '6px', backgroundColor: '#fff1f2', border: '1px solid #ffe4e6', color: '#e11d48', borderRadius: '4px', cursor: 'pointer', transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                                                 >
                                                     {deletingApptId === app.id ? (
@@ -206,8 +208,8 @@ const UserDashboard = () => {
                             </table>
                         ) : (
                             <div className="empty-state">
-                                <h4>Aucun rendez-vous trouvé</h4>
-                                <Link to="/rendez-vous" className="btn btn-primary">Prendre rendez-vous</Link>
+                                <h4>{t(tr.appointments.empty)}</h4>
+                                <Link to="/rendez-vous" className="btn btn-primary">{t(tr.appointments.bookNow)}</Link>
                             </div>
                         )}
                     </div>
@@ -227,7 +229,7 @@ const UserDashboard = () => {
                                             <div className="message-card-info">
                                                 <h4 className="message-subject">{msg.subject}</h4>
                                                 <span className="message-date">
-                                                    {new Date(msg.created_at).toLocaleDateString('fr-FR', {
+                                                    {new Date(msg.created_at).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR', {
                                                         day: 'numeric', month: 'long', year: 'numeric'
                                                     })}
                                                 </span>
@@ -239,11 +241,11 @@ const UserDashboard = () => {
                                                             <polyline points="9 17 4 12 9 7"></polyline>
                                                             <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
                                                         </svg>
-                                                        Répondu
+                                                        {t(tr.messages.replied)}
                                                     </span>
                                                 )}
                                                 <span className={`status-badge ${msg.is_read ? 'status-confirmed' : 'status-pending'}`}>
-                                                    {msg.is_read ? 'Lu' : 'Non lu'}
+                                                    {msg.is_read ? t(tr.messages.read) : t(tr.messages.unread)}
                                                 </span>
                                                 <button
                                                     className="delete-message-btn"
@@ -252,7 +254,7 @@ const UserDashboard = () => {
                                                         handleDeleteMessage(msg.id);
                                                     }}
                                                     disabled={deletingId === msg.id}
-                                                    title="Supprimer le message"
+                                                    title={t(common.contact)}
                                                 >
                                                     {deletingId === msg.id ? (
                                                         <span className="spinner-small"></span>
@@ -278,7 +280,7 @@ const UserDashboard = () => {
                                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                                                         </svg>
-                                                        Votre message
+                                                        {t(tr.messages.yourMessage)}
                                                     </div>
                                                     <p>{msg.message}</p>
                                                 </div>
@@ -290,12 +292,12 @@ const UserDashboard = () => {
                                                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                                                                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
                                                             </svg>
-                                                            Réponse de l'administration
+                                                            {t(tr.messages.adminReply)}
                                                         </div>
                                                         <p>{msg.admin_reply}</p>
                                                         <div className="reply-meta">
                                                             <span className="reply-date">
-                                                                Répondu le {new Date(msg.replied_at).toLocaleDateString('fr-FR', {
+                                                                {t(tr.messages.repliedOn)} {new Date(msg.replied_at).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR', {
                                                                     day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
                                                                 })}
                                                             </span>
@@ -310,7 +312,7 @@ const UserDashboard = () => {
                                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                                         <polyline points="20 6 9 17 4 12"></polyline>
                                                                     </svg>
-                                                                    Marquer comme lu
+                                                                    {t(tr.messages.markRead)}
                                                                 </button>
                                                             )}
                                                         </div>
@@ -323,7 +325,7 @@ const UserDashboard = () => {
                                                             <circle cx="12" cy="12" r="10"></circle>
                                                             <polyline points="12 6 12 12 16 14"></polyline>
                                                         </svg>
-                                                        <span>En attente de réponse...</span>
+                                                        <span>{t(tr.messages.waitingReply)}</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -333,8 +335,8 @@ const UserDashboard = () => {
                             </div>
                         ) : (
                             <div className="empty-state">
-                                <h4>Aucun message envoyé</h4>
-                                <Link to="/contact" className="btn btn-primary">Nous contacter</Link>
+                                <h4>{t(tr.messages.empty)}</h4>
+                                <Link to="/contact" className="btn btn-primary">{t(tr.messages.contactBtn)}</Link>
                             </div>
                         )}
                     </div>
@@ -348,7 +350,7 @@ const UserDashboard = () => {
                                     <h4>{service.title}</h4>
                                     <p>{service.description}</p>
                                     <div className="card-actions">
-                                        <Link to={`/services`} className="btn-text">Détails</Link>
+                                        <Link to={`/services`} className="btn-text">{t(translations.about.learnMore)}</Link>
                                         <button
                                             onClick={async () => {
                                                 await toggleServiceSelection(service.id);
@@ -358,15 +360,15 @@ const UserDashboard = () => {
                                             }}
                                             className="btn btn-secondary btn-sm"
                                         >
-                                            Retirer
+                                            {t({ fr: 'Retirer', ar: 'إزالة' })}
                                         </button>
                                     </div>
                                 </div>
                             ))
                         ) : (
                             <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
-                                <h4>Vous n'avez pas encore de services sélectionnés</h4>
-                                <Link to="/services" className="btn btn-primary">Explorer les services</Link>
+                                <h4>{t(tr.tabs.selections)} {t({ fr: ' vide', ar: ' فارغة' })}</h4>
+                                <Link to="/services" className="btn btn-primary">{t(tr.overview.exploreServices)}</Link>
                             </div>
                         )}
                     </div>
@@ -375,37 +377,37 @@ const UserDashboard = () => {
                 return (
                     <div className="overview-content">
                         <div className="welcome-section">
-                            <h3>Bienvenue sur votre espace, {user.name} !</h3>
-                            <p>Retrouvez ici l'historique de vos rendez-vous, vos messages et vos services préférés.</p>
+                            <h3>{t(tr.welcome)}{user.name} !</h3>
+                            <p>{t(tr.welcomeSub)}</p>
                         </div>
 
                         <div className="overview-grid">
                             <div className="overview-card">
                                 <div className="overview-card-header">
-                                    <h4>Prochain Rendez-vous</h4>
-                                    <Link to="#" onClick={() => setActiveTab('appointments')} className="view-all">Tout voir</Link>
+                                    <h4>{t(tr.overview.nextAppt)}</h4>
+                                    <Link to="#" onClick={() => setActiveTab('appointments')} className="view-all">{t(tr.overview.viewAll)}</Link>
                                 </div>
                                 <div className="overview-card-body">
                                     {appointments.length > 0 ? (
                                         <div className="featured-item">
                                             <div className="item-main">{appointments[0].service}</div>
                                             <div className="item-sub">
-                                                {new Date(appointments[0].date).toLocaleDateString('fr-FR')} à {appointments[0].time}
+                                                {new Date(appointments[0].date).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR')} à {appointments[0].time}
                                             </div>
                                             <span className={`status-badge status-${appointments[0].status}`}>
-                                                {appointments[0].status === 'pending' ? 'En attente' : 'Confirmé'}
+                                                {appointments[0].status === 'pending' ? t(tr.appointments.status.pending) : t(tr.appointments.status.confirmed)}
                                             </span>
                                         </div>
                                     ) : (
-                                        <p className="empty-text">Aucun rendez-vous à venir.</p>
+                                        <p className="empty-text">{t(tr.overview.noAppt)}</p>
                                     )}
                                 </div>
                             </div>
 
                             <div className="overview-card">
                                 <div className="overview-card-header">
-                                    <h4>Dernier Message</h4>
-                                    <Link to="#" onClick={() => setActiveTab('messages')} className="view-all">Tout voir</Link>
+                                    <h4>{t(tr.overview.lastMsg)}</h4>
+                                    <Link to="#" onClick={() => setActiveTab('messages')} className="view-all">{t(tr.overview.viewAll)}</Link>
                                 </div>
                                 <div className="overview-card-body">
                                     {messages.length > 0 ? (
@@ -424,22 +426,22 @@ const UserDashboard = () => {
                                                 </div>
                                             )}
                                             <div className="item-date">
-                                                {new Date(messages[0].created_at).toLocaleDateString('fr-FR')}
+                                                {new Date(messages[0].created_at).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR')}
                                             </div>
                                         </div>
                                     ) : (
-                                        <p className="empty-text">Aucun message envoyé.</p>
+                                        <p className="empty-text">{t(tr.overview.noMsg)}</p>
                                     )}
                                 </div>
                             </div>
                         </div>
 
                         <div className="quick-actions-bar">
-                            <h4>Actions Rapides</h4>
+                            <h4>{t(tr.overview.quickActions)}</h4>
                             <div className="action-buttons">
-                                <Link to="/rendez-vous" className="btn btn-primary btn-sm">Nouveau Rendez-vous</Link>
-                                <Link to="/services" className="btn btn-secondary btn-sm">Explorer les Services</Link>
-                                <Link to="/contact" className="btn btn-white btn-sm">Nous Contacter</Link>
+                                <Link to="/rendez-vous" className="btn btn-primary btn-sm">{t(tr.overview.newAppt)}</Link>
+                                <Link to="/services" className="btn btn-secondary btn-sm">{t(tr.overview.exploreServices)}</Link>
+                                <Link to="/contact" className="btn btn-white btn-sm">{t(tr.overview.contactUs)}</Link>
                             </div>
                         </div>
                     </div>
@@ -450,10 +452,10 @@ const UserDashboard = () => {
     return (
         <div className="user-dashboard animate-fadeInUp">
             <div className="dashboard-container">
-                <div className="dashboard-header">
-                    <div>
-                        <h1>Mon Tableau de Bord</h1>
-                        <p>Espace patient de {user.name}</p>
+                <div className="dashboard-header" style={{ flexDirection: language === 'ar' ? 'row-reverse' : 'row' }}>
+                    <div style={{ textAlign: language === 'ar' ? 'right' : 'left' }}>
+                        <h1>{t(tr.title)}</h1>
+                        <p>{t(tr.patientSpace)}{user.name}</p>
                     </div>
                     <div className="header-actions">
                         {/* Notification Bell */}
@@ -461,7 +463,7 @@ const UserDashboard = () => {
                             <button
                                 className="notification-bell-btn"
                                 onClick={() => setShowNotifications(!showNotifications)}
-                                title="Notifications"
+                                title={t(tr.notifications.title)}
                             >
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -474,11 +476,14 @@ const UserDashboard = () => {
                             </button>
 
                             {showNotifications && (
-                                <div className="notifications-dropdown animate-fadeInUp">
+                                <div className="notifications-dropdown animate-fadeInUp" style={{ right: language === 'ar' ? 'auto' : '0', left: language === 'ar' ? '0' : 'auto' }}>
                                     <div className="notifications-header">
-                                        <h4>Notifications</h4>
+                                        <h4>{t(tr.notifications.title)}</h4>
                                         {unreadReplies.length > 0 && (
-                                            <span className="notif-count">{unreadReplies.length} nouvelle{unreadReplies.length > 1 ? 's' : ''}</span>
+                                            <span className="notif-count">
+                                                {unreadReplies.length} 
+                                                {unreadReplies.length > 1 ? t(tr.notifications.news) : t(tr.notifications.new)}
+                                            </span>
                                         )}
                                     </div>
                                     <div className="notifications-list">
@@ -491,11 +496,11 @@ const UserDashboard = () => {
                                                             <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
                                                         </svg>
                                                     </div>
-                                                    <div className="notif-content">
-                                                        <p className="notif-title">Nouvelle réponse à "<strong>{msg.subject}</strong>"</p>
+                                                    <div className="notif-content" style={{ textAlign: language === 'ar' ? 'right' : 'left' }}>
+                                                        <p className="notif-title">{t(tr.notifications.replyTo)}<strong>{msg.subject}</strong>"</p>
                                                         <p className="notif-preview">{msg.admin_reply.substring(0, 80)}{msg.admin_reply.length > 80 ? '...' : ''}</p>
                                                         <span className="notif-time">
-                                                            {new Date(msg.replied_at).toLocaleDateString('fr-FR', {
+                                                            {new Date(msg.replied_at).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR', {
                                                                 day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
                                                             })}
                                                         </span>
@@ -507,7 +512,7 @@ const UserDashboard = () => {
                                                                 e.stopPropagation();
                                                                 handleMarkReplyRead(msg.id);
                                                             }}
-                                                            title="Marquer comme lu"
+                                                            title={t(tr.messages.markRead)}
                                                         >
                                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                                 <polyline points="20 6 9 17 4 12"></polyline>
@@ -521,7 +526,7 @@ const UserDashboard = () => {
                                                                 setExpandedMessage(msg.id);
                                                                 setShowNotifications(false);
                                                             }}
-                                                            title="Voir le message"
+                                                            title={t(tr.overview.viewAll)}
                                                         >
                                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -537,7 +542,7 @@ const UserDashboard = () => {
                                                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                                                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                                                 </svg>
-                                                <p>Aucune nouvelle notification</p>
+                                                <p>{t(tr.notifications.empty)}</p>
                                             </div>
                                         )}
                                     </div>
@@ -550,7 +555,7 @@ const UserDashboard = () => {
                                                     setShowNotifications(false);
                                                 }}
                                             >
-                                                Voir tous les messages
+                                                {t(tr.notifications.viewAll)}
                                             </button>
                                         </div>
                                     )}
@@ -560,13 +565,13 @@ const UserDashboard = () => {
                     </div>
                 </div>
 
-                <div className="dashboard-stats">
+                <div className="dashboard-stats" style={{ flexDirection: language === 'ar' ? 'row-reverse' : 'row' }}>
                     <div className="stat-card">
                         <div className="stat-icon icon-blue">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                         </div>
-                        <div className="stat-info">
-                            <h3>Rendez-vous</h3>
+                        <div className="stat-info" style={{ textAlign: language === 'ar' ? 'right' : 'left' }}>
+                            <h3>{t(tr.stats.appointments)}</h3>
                             <div className="stat-value">{stats.total_appointments}</div>
                         </div>
                     </div>
@@ -574,8 +579,8 @@ const UserDashboard = () => {
                         <div className="stat-icon icon-green">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                         </div>
-                        <div className="stat-info">
-                            <h3>Messages</h3>
+                        <div className="stat-info" style={{ textAlign: language === 'ar' ? 'right' : 'left' }}>
+                            <h3>{t(tr.stats.messages)}</h3>
                             <div className="stat-value">{stats.total_messages}</div>
                         </div>
                     </div>
@@ -583,8 +588,8 @@ const UserDashboard = () => {
                         <div className="stat-icon icon-purple">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                         </div>
-                        <div className="stat-info">
-                            <h3>Sélections</h3>
+                        <div className="stat-info" style={{ textAlign: language === 'ar' ? 'right' : 'left' }}>
+                            <h3>{t(tr.stats.selections)}</h3>
                             <div className="stat-value">{stats.total_selections}</div>
                         </div>
                     </div>
@@ -596,32 +601,32 @@ const UserDashboard = () => {
                                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                                 </svg>
                             </div>
-                            <div className="stat-info">
-                                <h3>Réponses non lues</h3>
+                            <div className="stat-info" style={{ textAlign: language === 'ar' ? 'right' : 'left' }}>
+                                <h3>{t(tr.stats.unreadReplies)}</h3>
                                 <div className="stat-value">{stats.unread_replies}</div>
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="dashboard-tabs">
+                <div className="dashboard-tabs" style={{ display: 'flex', justifyContent: language === 'ar' ? 'flex-end' : 'flex-start' }}>
                     <button
                         className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
                         onClick={() => setActiveTab('overview')}
                     >
-                        Aperçu
+                        {t(tr.tabs.overview)}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'appointments' ? 'active' : ''}`}
                         onClick={() => setActiveTab('appointments')}
                     >
-                        Mes Rendez-vous
+                        {t(tr.tabs.appointments)}
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'messages' ? 'active' : ''}`}
                         onClick={() => setActiveTab('messages')}
                     >
-                        Mes Messages
+                        {t(tr.tabs.messages)}
                         {stats.unread_replies > 0 && (
                             <span className="tab-badge">{stats.unread_replies}</span>
                         )}
@@ -630,7 +635,7 @@ const UserDashboard = () => {
                         className={`tab-btn ${activeTab === 'selections' ? 'active' : ''}`}
                         onClick={() => setActiveTab('selections')}
                     >
-                        Mes Sélections
+                        {t(tr.tabs.selections)}
                     </button>
                 </div>
 

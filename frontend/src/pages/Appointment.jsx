@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { createAppointment } from '../services/api';
 import ScrollReveal from '../components/ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
 import './Appointment.css';
 
 const Appointment = () => {
+    const { t } = useLanguage();
+    const tr = translations.appointment;
+    const common = translations.common;
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -23,23 +29,13 @@ const Appointment = () => {
                 ...prev,
                 name: user.name || '',
                 email: user.email || '',
-                phone: user.phone || '' // Some users might have phone saved
+                phone: user.phone || ''
             }));
         }
     }, []);
 
     const [status, setStatus] = useState({ type: '', message: '' });
     const [loading, setLoading] = useState(false);
-
-    const services = [
-        'Kinésithérapie',
-        'Physiothérapie',
-        'Traumatologie',
-        'Rhumatologie',
-        'Neurologie',
-        'Amincissement',
-        'Autre'
-    ];
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,7 +50,7 @@ const Appointment = () => {
             await createAppointment(formData);
             setStatus({
                 type: 'success',
-                message: 'Votre demande de rendez-vous a bien été envoyée. Nous vous confirmerons la date et l\'heure par téléphone sous peu.'
+                message: t(tr.successMsg)
             });
             setFormData({
                 name: '', email: '', phone: '', service: '',
@@ -64,7 +60,7 @@ const Appointment = () => {
             console.error('Error booking appointment:', error);
             setStatus({
                 type: 'error',
-                message: 'Une erreur est survenue lors de la réservation. Veuillez réessayer ou nous contacter par téléphone.'
+                message: t(tr.errorMsg)
             });
         } finally {
             setLoading(false);
@@ -74,11 +70,11 @@ const Appointment = () => {
     return (
         <div className="appointment-page">
             <PageHeader
-                title="Prendre Rendez-vous"
-                subtitle="Réservez votre consultation en ligne facilement"
+                title={t(tr.headerTitle)}
+                subtitle={t(tr.headerSub)}
                 breadcrumb={[
-                    { label: 'Accueil', link: '/' },
-                    { label: 'Rendez-vous' }
+                    { label: t(common.home), link: '/' },
+                    { label: t(common.appointment) }
                 ]}
             />
 
@@ -87,37 +83,36 @@ const Appointment = () => {
                     <div className="appointment-grid">
                         {/* Intro Content */}
                         <ScrollReveal direction="left" className="appointment-intro visible">
-                            <span className="section-subtitle">Consultation</span>
-                            <h2 className="section-title">Votre santé ne peut pas attendre</h2>
+                            <span className="section-subtitle">{t(tr.subtitle)}</span>
+                            <h2 className="section-title">{t(tr.title)}</h2>
                             <p className="lead-text">
-                                Remplissez le formulaire ci-contre pour demander un rendez-vous. Notre équipe
-                                administrative vous contactera rapidement pour confirmer votre consultation.
+                                {t(tr.lead)}
                             </p>
 
                             <div className="appointment-steps">
                                 <div className="step-item">
                                     <span className="step-number">1</span>
-                                    <h4>Remplissez le formulaire</h4>
-                                    <p>Indiquez vos coordonnées et vos préférences de date.</p>
+                                    <h4>{t(tr.step1Title)}</h4>
+                                    <p>{t(tr.step1Desc)}</p>
                                 </div>
                                 <div className="step-item">
                                     <span className="step-number">2</span>
-                                    <h4>Confirmation</h4>
-                                    <p>Nous vous appelons pour confirmer le créneau horaire.</p>
+                                    <h4>{t(tr.step2Title)}</h4>
+                                    <p>{t(tr.step2Desc)}</p>
                                 </div>
                                 <div className="step-item">
                                     <span className="step-number">3</span>
-                                    <h4>Consultation</h4>
-                                    <p>Présentez-vous au cabinet 10 minutes avant votre heure.</p>
+                                    <h4>{t(tr.step3Title)}</h4>
+                                    <p>{t(tr.step3Desc)}</p>
                                 </div>
                             </div>
 
                             <div className="appointment-info-box">
-                                <h4>Heures d'ouverture</h4>
+                                <h4>{t(tr.openingHours)}</h4>
                                 <ul className="info-hours">
-                                    <li><span>Lun - Ven:</span> <strong>09:00 - 18:00</strong></li>
-                                    <li><span>Samedi:</span> <strong>10:00 - 15:00</strong></li>
-                                    <li><span>Dimanche:</span> <strong>Fermé</strong></li>
+                                    <li><span>{t(translations.hours.days[0].day)} - {t(translations.hours.days[4].day)}:</span> <strong>09:00 - 18:00</strong></li>
+                                    <li><span>{t(translations.hours.days[5].day)}:</span> <strong>10:00 - 15:00</strong></li>
+                                    <li><span>{t(translations.hours.days[6].day)}:</span> <strong>{t(translations.hours.days[6].hours)}</strong></li>
                                 </ul>
                             </div>
                         </ScrollReveal>
@@ -125,7 +120,7 @@ const Appointment = () => {
                         {/* Booking Form */}
                         <ScrollReveal direction="right" delay={0.2} className="appointment-form-card card visible">
                             <form onSubmit={handleSubmit}>
-                                <h3 className="form-title">Formulaire de Réservation</h3>
+                                <h3 className="form-title">{t(tr.formTitle)}</h3>
 
                                 {status.message && (
                                     <div className={`alert alert-${status.type}`}>
@@ -135,7 +130,7 @@ const Appointment = () => {
 
                                 <div className="form-row">
                                     <div className="form-group">
-                                        <label htmlFor="name" className="form-label">Nom complet *</label>
+                                        <label htmlFor="name" className="form-label">{t(common.name)} *</label>
                                         <input
                                             type="text"
                                             id="name"
@@ -144,11 +139,11 @@ const Appointment = () => {
                                             required
                                             value={formData.name}
                                             onChange={handleChange}
-                                            placeholder="Votre nom"
+                                            placeholder={t(translations.contact.formPlaceholderName)}
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="phone" className="form-label">Téléphone *</label>
+                                        <label htmlFor="phone" className="form-label">{t(common.phone)} *</label>
                                         <input
                                             type="tel"
                                             id="phone"
@@ -157,14 +152,14 @@ const Appointment = () => {
                                             required
                                             value={formData.phone}
                                             onChange={handleChange}
-                                            placeholder="06 00 00 00 00"
+                                            placeholder={t(translations.contact.formPlaceholderPhone)}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="form-row">
                                     <div className="form-group">
-                                        <label htmlFor="email" className="form-label">Email</label>
+                                        <label htmlFor="email" className="form-label">{t(common.email)}</label>
                                         <input
                                             type="email"
                                             id="email"
@@ -172,11 +167,11 @@ const Appointment = () => {
                                             className="form-input"
                                             value={formData.email}
                                             onChange={handleChange}
-                                            placeholder="votre@email.com"
+                                            placeholder={t(translations.contact.formPlaceholderEmail)}
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="service" className="form-label">Service souhaité *</label>
+                                        <label htmlFor="service" className="form-label">{t(tr.formServiceLabel)}</label>
                                         <select
                                             id="service"
                                             name="service"
@@ -185,9 +180,9 @@ const Appointment = () => {
                                             value={formData.service}
                                             onChange={handleChange}
                                         >
-                                            <option value="">Sélectionnez un service</option>
-                                            {services.map((s, i) => (
-                                                <option key={i} value={s}>{s}</option>
+                                            <option value="">{t(tr.formSelectService)}</option>
+                                            {tr.services.map((s, i) => (
+                                                <option key={i} value={t(s)}>{t(s)}</option>
                                             ))}
                                         </select>
                                     </div>
@@ -195,7 +190,7 @@ const Appointment = () => {
 
                                 <div className="form-row">
                                     <div className="form-group">
-                                        <label htmlFor="date" className="form-label">Date souhaitée *</label>
+                                        <label htmlFor="date" className="form-label">{t(tr.formDateLabel)}</label>
                                         <input
                                             type="date"
                                             id="date"
@@ -207,7 +202,7 @@ const Appointment = () => {
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="time" className="form-label">Heure souhaitée</label>
+                                        <label htmlFor="time" className="form-label">{t(tr.formTimeLabel)}</label>
                                         <input
                                             type="time"
                                             id="time"
@@ -220,21 +215,21 @@ const Appointment = () => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="message" className="form-label">Message / Symptômes</label>
+                                    <label htmlFor="message" className="form-label">{t(tr.formMessageLabel)}</label>
                                     <textarea
                                         id="message"
                                         name="message"
                                         className="form-textarea"
                                         value={formData.message}
                                         onChange={handleChange}
-                                        placeholder="Décrivez brièvement vos symptômes ou laissez un message..."
+                                        placeholder={t(tr.formMessagePlaceholder)}
                                     ></textarea>
                                 </div>
 
                                 <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-                                    {loading ? 'Envoi en cours...' : 'Confirmer la demande'}
+                                    {loading ? t(common.sending) : t(tr.submitBtn)}
                                 </button>
-                                <p className="form-note">* Champs obligatoires</p>
+                                <p className="form-note">{t(common.requiredFields)}</p>
                             </form>
                         </ScrollReveal>
                     </div>

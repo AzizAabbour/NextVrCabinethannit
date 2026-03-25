@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
+import LanguageSwitcher from './LanguageSwitcher';
 import './Navbar.css';
 
 /**
- * Navbar - Professional responsive navigation with glassmorphism
+ * Navbar - Professional responsive navigation with glassmorphism + Language Switcher
  */
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [user, setUser] = useState(null);
     const location = useLocation();
+    const { t, language, setLanguage } = useLanguage();
+    const tr = translations;
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -56,17 +61,20 @@ const Navbar = () => {
     };
 
     const navLinks = [
-        { path: '/', label: 'Accueil' },
-        { path: '/a-propos', label: 'À propos' },
-        { path: '/services', label: 'Services' },
-        { path: '/equipe', label: 'Équipe' },
-        { path: '/contact', label: 'Contact' },
+        { path: '/', label: t(tr.nav.home) },
+        { path: '/a-propos', label: t(tr.nav.about) },
+        { path: '/services', label: t(tr.nav.services) },
+        { path: '/equipe', label: t(tr.nav.team) },
+        { path: '/contact', label: t(tr.nav.contact) },
     ];
 
-    // The dashboard link is moved to the actions section as a button in CTA
-
     const isAdmin = location.pathname.startsWith('/admin');
-    if (isAdmin) return null; // Hide navbar on admin pages
+    if (isAdmin) return null;
+
+    const languages = [
+        { code: 'fr', label: 'FR', flag: '🇫🇷' },
+        { code: 'ar', label: 'AR', flag: '🇲🇦' },
+    ];
 
     return (
         <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
@@ -78,7 +86,7 @@ const Navbar = () => {
                     </div>
                     <div className="logo-text">
                         <span className="logo-name">Cabinet Hannit</span>
-                        <span className="logo-tagline">Kinésithérapie</span>
+                        <span className="logo-tagline">{t(tr.nav.tagline)}</span>
                     </div>
                 </Link>
 
@@ -92,7 +100,7 @@ const Navbar = () => {
                                 {link.path === '/dashboard' ? (
                                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                        Tableau de bord
+                                        {t(tr.nav.dashboard)}
                                     </span>
                                 ) : link.label}
                             </Link>
@@ -100,20 +108,21 @@ const Navbar = () => {
                     ))}
                 </ul>
 
-                {/* CTA Button + Phone */}
+                {/* CTA Button + Language Switcher */}
                 <div className="navbar-actions">
+                    <LanguageSwitcher />
                     {user ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <Link to="/dashboard" className="btn" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 18px', borderRadius: '50px', fontWeight: '600', color: 'var(--primary)', backgroundColor: 'transparent', border: '1.5px solid var(--primary)', textDecoration: 'none', transition: 'all 0.3s' }}>
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                Tableau de bord
+                                {t(tr.nav.dashboard)}
                             </Link>
 
                             {user.auth_provider === 'google' ? (
                                 <button
                                     onClick={handleLogout}
                                     style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 16px 6px 8px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '50px', fontSize: '0.9rem', fontWeight: '600', color: '#334155', cursor: 'pointer', transition: 'all 0.3s' }}
-                                    title="Se déconnecter"
+                                    title={t(tr.nav.logoutTitle)}
                                     onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(194, 52, 100, 0.1)'; }}
                                     onMouseOut={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.boxShadow = 'none'; }}
                                 >
@@ -134,17 +143,17 @@ const Navbar = () => {
                                 </button>
                             ) : (
                                 <button onClick={handleLogout} className="btn btn-secondary nav-cta">
-                                    Déconnexion
+                                    {t(tr.nav.logout)}
                                 </button>
                             )}
                         </div>
                     ) : (
                         <>
                             <Link to="/connexion" className="btn btn-secondary nav-cta">
-                                Connexion
+                                {t(tr.nav.login)}
                             </Link>
                             <Link to="/rendez-vous" className="btn btn-primary nav-cta" id="nav-appointment-btn">
-                                Rendez-vous
+                                {t(tr.nav.appointment)}
                             </Link>
                         </>
                     )}
@@ -172,7 +181,7 @@ const Navbar = () => {
                         </div>
                         <div className="logo-text">
                             <span className="logo-name">Cabinet Hannit</span>
-                            <span className="logo-tagline">Kinésithérapie</span>
+                            <span className="logo-tagline">{t(tr.nav.tagline)}</span>
                         </div>
                     </div>
                     <button className="mobile-close" onClick={() => setMenuOpen(false)}>
@@ -183,6 +192,21 @@ const Navbar = () => {
                 </div>
 
                 <div className="mobile-menu-content">
+                    {/* Mobile Language Switcher */}
+                    <div className="mobile-lang-switcher">
+                        {languages.map((lang) => (
+                            <button
+                                key={lang.code}
+                                className={`mobile-lang-btn ${language === lang.code ? 'active' : ''}`}
+                                onClick={() => setLanguage(lang.code)}
+                                id={`mobile-lang-${lang.code}`}
+                            >
+                                <span className="mobile-lang-btn-flag">{lang.flag}</span>
+                                <span className="mobile-lang-btn-label">{lang.label}</span>
+                            </button>
+                        ))}
+                    </div>
+
                     <ul className="mobile-links">
                         {navLinks.map((link, i) => (
                             <li key={link.path}>
@@ -201,26 +225,26 @@ const Navbar = () => {
                         {user ? (
                             <>
                                 <Link to="/dashboard" className="btn btn-primary mobile-cta" onClick={() => setMenuOpen(false)}>
-                                    Tableau de bord
+                                    {t(tr.nav.dashboard)}
                                 </Link>
                                 <button onClick={handleLogout} className="btn btn-secondary mobile-cta">
-                                    Déconnexion
+                                    {t(tr.nav.logout)}
                                 </button>
                             </>
                         ) : (
                             <>
                                 <Link to="/connexion" className="btn btn-secondary mobile-cta" onClick={() => setMenuOpen(false)}>
-                                    Connexion
+                                    {t(tr.nav.login)}
                                 </Link>
                                 <Link to="/rendez-vous" className="btn btn-primary mobile-cta" onClick={() => setMenuOpen(false)}>
-                                    Prendre Rendez-vous
+                                    {t(tr.nav.mobileAppointment)}
                                 </Link>
                             </>
                         )}
                     </div>
 
                     <div className="mobile-footer">
-                        <p className="mobile-footer-title">Contactez-nous</p>
+                        <p className="mobile-footer-title">{t(tr.nav.contactUs)}</p>
                         <a href="tel:+212644574537" className="mobile-footer-link">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                             +212 644 574 537

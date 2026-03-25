@@ -1,55 +1,47 @@
 import React from 'react';
 import PageHeader from '../components/PageHeader';
 import ScrollReveal from '../components/ScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
+import translations from '../i18n/translations';
 import './Doctors.css';
 
 const Doctors = () => {
-    const teamMembers = [
-        {
-            name: 'Asmaa Hannit',
-            role: 'Fondatrice & Kinésithérapeute',
-            speciality: 'Rééducation fonctionnelle, Thérapie manuelle',
-            bio: 'Diplômée en kinésithérapie, Asmaa a fondé le cabinet en 2017 avec pour mission d\'offrir des soins personnalisés et de qualité.',
-            image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&h=600&fit=crop'
-        },
-        {
-            name: 'Dr. Sarah Bennani',
-            role: 'Médecin Physique',
-            speciality: 'Réadaptation, Traumatologie du sport',
-            bio: 'Spécialiste en médecine physique et réadaptation, elle supervise les protocoles de soins pour les sportifs de haut niveau.',
-            image: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=500&h=600&fit=crop'
-        },
-        {
-            name: 'Youssef El Amrani',
-            role: 'Kinésithérapeute',
-            speciality: 'Neurologie, Rééducation respiratoire',
-            bio: 'Passionné par la neurologie, Youssef accompagne les patients atteints de pathologies neurologiques vers plus d\'autonomie.',
-            image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=500&h=600&fit=crop'
-        }
+    const { t } = useLanguage();
+    const tr = translations.doctors;
+    const common = translations.common;
+
+    const teamImages = [
+        'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&h=600&fit=crop',
+        'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=500&h=600&fit=crop',
+        'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=500&h=600&fit=crop'
     ];
 
     return (
         <div className="doctors-page">
             <PageHeader
-                title="Notre Équipe"
-                subtitle="Des professionnels passionnés et dévoués à votre santé"
+                title={t(tr.headerTitle)}
+                subtitle={t(tr.headerSub)}
                 breadcrumb={[
-                    { label: 'Accueil', link: '/' },
-                    { label: 'Équipe' }
+                    { label: t(common.home), link: '/' },
+                    { label: t(tr.headerTitle) }
                 ]}
             />
 
             <section className="section team-section">
                 <div className="container">
                     <div className="team-grid">
-                        {teamMembers.map((member, index) => (
+                        {tr.members.map((member, index) => (
                             <ScrollReveal
                                 key={index}
                                 delay={index * 0.2}
                                 className="team-card card visible"
                             >
                                 <div className="team-image-wrapper">
-                                    <img src={member.image} alt={member.name} className="team-image" />
+                                    <img 
+                                        src={teamImages[index]} 
+                                        alt={t(member.name)} 
+                                        className="team-image" 
+                                    />
                                     <div className="team-overlay">
                                         <div className="team-social">
                                             <a href="#" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></svg></a>
@@ -58,10 +50,10 @@ const Doctors = () => {
                                     </div>
                                 </div>
                                 <div className="team-content">
-                                    <h3 className="team-name">{member.name}</h3>
-                                    <span className="team-role">{member.role}</span>
-                                    <p className="team-speciality">{member.speciality}</p>
-                                    <p className="team-bio">{member.bio}</p>
+                                    <h3 className="team-name">{t(member.name)}</h3>
+                                    <span className="team-role">{t(member.role)}</span>
+                                    <p className="team-speciality">{t(member.speciality)}</p>
+                                    <p className="team-bio">{t(member.bio)}</p>
                                 </div>
                             </ScrollReveal>
                         ))}
